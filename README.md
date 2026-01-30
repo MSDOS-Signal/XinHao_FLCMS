@@ -64,6 +64,27 @@
 
 ## 3. 11大核心系统详解 (Core Modules)
 
+### 📸 系统截图展示 (System Screenshots)
+<div align="center">
+  <img src="img/17eb7b911c184eda68cd21823a0f5880.png" width="48%" />
+  <img src="img/29a7fe17da5761ddb35d3c16cdb57c28.png" width="48%" />
+  <img src="img/33c5599bdd212c8ceed856696c459966.png" width="48%" />
+  <img src="img/3fe8d4c76ce4e219124fc69a3fe122d4.png" width="48%" />
+  <img src="img/4baf13c3f53790c16d8ea9aa14612da5.png" width="48%" />
+  <img src="img/4d61ca70429bc21d0d8dc4f2b9208542.png" width="48%" />
+  <img src="img/4ef9fcf68f571d2014e9d00e5f59d495.png" width="48%" />
+  <img src="img/5d0b90292ac46ed19cf3ba078221ba22.png" width="48%" />
+  <img src="img/66acd02b34d6120ef5c16a4c56322371.png" width="48%" />
+  <img src="img/68582641d6c2e24b1f468b8093a835ed.png" width="48%" />
+  <img src="img/6e6824409936c6d58b0553bafa74c21c.png" width="48%" />
+  <img src="img/7ce7ada3c26385da3a2868d7c5a30a2a.png" width="48%" />
+  <img src="img/9d280dc5fe33569836786e6f0579f2c4.png" width="48%" />
+  <img src="img/ad6e7f0be421c33cc297965a2c93010e.png" width="48%" />
+  <img src="img/c2b3acc324f04d707a90a35df8a7485f.png" width="48%" />
+  <img src="img/e6a923ab56a4f2fc88820c618b2c3162.png" width="48%" />
+  <img src="img/fc3a683364e1f87488bf368bef4a6900.png" width="48%" />
+</div>
+
 ### 1. ERP (企业资源计划) - 统筹全企业资源，实现业财一体化
 **核心目标**：打通销售/采购/生产/财务/库存数据闭环，所有业务单据自动生成财务凭证，无人工录入。
 *   **销售管理**: 客户档案、报价单、销售订单、销售出库单（关联WMS）、回款管理。
