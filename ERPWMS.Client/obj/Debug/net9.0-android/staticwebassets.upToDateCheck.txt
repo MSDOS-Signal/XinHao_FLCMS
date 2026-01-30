@@ -1,0 +1,12 @@
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Client\wwwroot\css\bootstrap\bootstrap.min.css
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Client\wwwroot\css\bootstrap\bootstrap.min.css.map
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Client\wwwroot\js\echartsInterop.js
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Client\wwwroot\index.html
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Client\wwwroot\css\app.css
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Client\wwwroot\logo.svg
+wwwroot\css\app.css
+wwwroot\css\bootstrap\bootstrap.min.css
+wwwroot\css\bootstrap\bootstrap.min.css.map
+wwwroot\index.html
+wwwroot\js\echartsInterop.js
+wwwroot\logo.svg

@@ -1,0 +1,56 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "ERPWMS.APS.EAM.MOM/1.0.0": {
+        "dependencies": {
+          "ERPWMS.Domain": "1.0.0",
+          "ERPWMS.Shared": "1.0.0"
+        },
+        "runtime": {
+          "ERPWMS.APS.EAM.MOM.dll": {}
+        }
+      },
+      "ERPWMS.Domain/1.0.0": {
+        "dependencies": {
+          "ERPWMS.Shared": "1.0.0"
+        },
+        "runtime": {
+          "ERPWMS.Domain.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "ERPWMS.Shared/1.0.0": {
+        "runtime": {
+          "ERPWMS.Shared.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "ERPWMS.APS.EAM.MOM/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ERPWMS.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ERPWMS.Shared/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

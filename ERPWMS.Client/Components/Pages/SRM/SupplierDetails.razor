@@ -1,0 +1,193 @@
+@page "/srm/suppliers/{Id:guid}"
+@inject EnterpriseService EnterpriseService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-white mb-0">供应商详情</h3>
+        <button class="btn btn-secondary" @onclick="GoBack">返回列表</button>
+    </div>
+
+    @if (supplier == null)
+    {
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">加载中...</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <!-- Basic Info -->
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card shadow h-100 py-2 border-left-primary bg-dark text-white">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    供应商名称</div>
+                                <div class="h5 mb-0 font-weight-bold text-white">@supplier.SupplierName</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="bi bi-building fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                        <hr class="bg-light" />
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <small class="text-white-50">分类</small>
+                                <p>@supplier.Category</p>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-white-50">评级</small>
+                                <p class="text-success">@supplier.Rating</p>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-white-50">状态</small>
+                                <p>@supplier.Status</p>
+                            </div>
+                             <div class="col-6">
+                                <small class="text-white-50">税号</small>
+                                <p>@supplier.TaxId</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card shadow h-100 py-2 border-left-success bg-dark text-white">
+                    <div class="card-body">
+                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                    联系方式</div>
+                        <div class="mt-3">
+                            <p><i class="bi bi-person me-2"></i> @supplier.ContactPerson</p>
+                            <p><i class="bi bi-telephone me-2"></i> @supplier.Phone</p>
+                            <p><i class="bi bi-envelope me-2"></i> @supplier.Email</p>
+                            <p><i class="bi bi-geo-alt me-2"></i> @supplier.Address</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Financial Info -->
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card shadow h-100 py-2 border-left-info bg-dark text-white">
+                    <div class="card-body">
+                         <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                    财务信息</div>
+                        <div class="mt-3">
+                            <p><strong>银行账号:</strong> @supplier.BankAccount</p>
+                            <p><strong>付款条款:</strong> @supplier.PaymentTerms</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Chart -->
+        <div class="row">
+            <div class="col-lg-12 mb-4">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">供货绩效分析</h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="supplierPerformanceChart" style="height: 400px; width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private ERPWMS.Domain.Entities.Supplier? supplier;
+
+    protected override async Task OnInitializedAsync()
+    {
+        supplier = await EnterpriseService.GetSupplierByIdAsync(Id);
+    }
+
+    private bool _chartRendered = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (supplier != null && !_chartRendered)
+        {
+            _chartRendered = true;
+            // Wait for DOM to be ready
+            await Task.Delay(200);
+            try 
+            {
+                await RenderChart();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Chart render error: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task RenderChart()
+    {
+        var stats = await EnterpriseService.GetSupplierStatsAsync(Id);
+        if (stats == null) return;
+
+        var chartOption = new
+        {
+            textStyle = new { color = "#ffffff" },
+            tooltip = new { trigger = "axis" },
+            legend = new { data = new[] { "准时交货率", "质量合格率" }, textStyle = new { color = "#ffffff" } },
+            grid = new { left = "3%", right = "4%", bottom = "3%", containLabel = true },
+            xAxis = new
+            {
+                type = "category",
+                boundaryGap = false,
+                data = stats.Months.ToArray(),
+                axisLine = new { lineStyle = new { color = "#ffffff" } },
+                axisLabel = new { color = "#ffffff" }
+            },
+            yAxis = new 
+            { 
+                type = "value", 
+                max = 100,
+                axisLine = new { lineStyle = new { color = "#ffffff" } },
+                axisLabel = new { color = "#ffffff" },
+                splitLine = new { lineStyle = new { color = "#444" } }
+            },
+            series = new[]
+            {
+                new
+                {
+                    name = "准时交货率",
+                    type = "line",
+                    data = stats.OnTimeRates.ToArray(),
+                    smooth = true,
+                    lineStyle = new { color = "#4e73df" }
+                },
+                new
+                {
+                    name = "质量合格率",
+                    type = "line",
+                    data = stats.QualityRates.ToArray(),
+                    smooth = true,
+                    lineStyle = new { color = "#1cc88a" }
+                }
+            }
+        };
+
+        await JSRuntime.InvokeVoidAsync("echartsInterop.initChart", "supplierPerformanceChart", chartOption);
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/srm/suppliers");
+    }
+}

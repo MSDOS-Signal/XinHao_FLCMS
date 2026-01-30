@@ -1,0 +1,363 @@
+{
+  "format": 1,
+  "restore": {
+    "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Application\\ERPWMS.Application.csproj": {}
+  },
+  "projects": {
+    "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Application\\ERPWMS.Application.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Application\\ERPWMS.Application.csproj",
+        "projectName": "ERPWMS.Application",
+        "projectPath": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Application\\ERPWMS.Application.csproj",
+        "packagesPath": "C:\\Users\\Victor.Dong\\.nuget\\packages\\",
+        "outputPath": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Application\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "D:\\DDD\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Victor.Dong\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.APS.EAM.MOM\\ERPWMS.APS.EAM.MOM.csproj": {
+                "projectPath": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.APS.EAM.MOM\\ERPWMS.APS.EAM.MOM.csproj"
+              },
+              "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Domain\\ERPWMS.Domain.csproj": {
+                "projectPath": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Domain\\ERPWMS.Domain.csproj"
+              },
+              "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Shared\\ERPWMS.Shared.csproj": {
+                "projectPath": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Shared\\ERPWMS.Shared.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[16.0.0, )"
+            },
+            "FluentValidation": {
+              "target": "Package",
+              "version": "[12.1.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Runtime.linux-x64",
+              "version": "[8.0.21, 8.0.21]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Runtime.linux-x64",
+              "version": "[8.0.21, 8.0.21]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "linux-x64": {
+          "#import": []
+        }
+      }
+    },
+    "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.APS.EAM.MOM\\ERPWMS.APS.EAM.MOM.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.APS.EAM.MOM\\ERPWMS.APS.EAM.MOM.csproj",
+        "projectName": "ERPWMS.APS.EAM.MOM",
+        "projectPath": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.APS.EAM.MOM\\ERPWMS.APS.EAM.MOM.csproj",
+        "packagesPath": "C:\\Users\\Victor.Dong\\.nuget\\packages\\",
+        "outputPath": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.APS.EAM.MOM\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "D:\\DDD\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Victor.Dong\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Domain\\ERPWMS.Domain.csproj": {
+                "projectPath": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Domain\\ERPWMS.Domain.csproj"
+              },
+              "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Shared\\ERPWMS.Shared.csproj": {
+                "projectPath": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Shared\\ERPWMS.Shared.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Runtime.linux-x64",
+              "version": "[8.0.21, 8.0.21]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Runtime.linux-x64",
+              "version": "[8.0.21, 8.0.21]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "linux-x64": {
+          "#import": []
+        }
+      }
+    },
+    "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Domain\\ERPWMS.Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Domain\\ERPWMS.Domain.csproj",
+        "projectName": "ERPWMS.Domain",
+        "projectPath": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Domain\\ERPWMS.Domain.csproj",
+        "packagesPath": "C:\\Users\\Victor.Dong\\.nuget\\packages\\",
+        "outputPath": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Domain\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "D:\\DDD\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Victor.Dong\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Shared\\ERPWMS.Shared.csproj": {
+                "projectPath": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Shared\\ERPWMS.Shared.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Runtime.linux-x64",
+              "version": "[8.0.21, 8.0.21]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Runtime.linux-x64",
+              "version": "[8.0.21, 8.0.21]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "linux-x64": {
+          "#import": []
+        }
+      }
+    },
+    "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Shared\\ERPWMS.Shared.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Shared\\ERPWMS.Shared.csproj",
+        "projectName": "ERPWMS.Shared",
+        "projectPath": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Shared\\ERPWMS.Shared.csproj",
+        "packagesPath": "C:\\Users\\Victor.Dong\\.nuget\\packages\\",
+        "outputPath": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Shared\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "D:\\DDD\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Victor.Dong\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Runtime.linux-x64",
+              "version": "[8.0.21, 8.0.21]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Runtime.linux-x64",
+              "version": "[8.0.21, 8.0.21]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "linux-x64": {
+          "#import": []
+        }
+      }
+    }
+  }
+}

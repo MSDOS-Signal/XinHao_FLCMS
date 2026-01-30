@@ -1,0 +1,92 @@
+@page "/modules"
+@inject NavigationManager NavigationManager
+
+<h3 class="mb-3">炘灏智造 · 全链路核心模块中心</h3>
+
+<div class="row">
+    <!-- SRM -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <span>SRM 供应商管理</span>
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div class="card-body">
+                <p>管理供应商生命周期与评级。</p>
+                <button class="btn btn-sm btn-outline-primary" @onclick='() => NavigateTo("srm/suppliers")'>进入 SRM 系统</button>
+            </div>
+        </div>
+    </div>
+    <!-- TMS -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <span>TMS 物流运输</span>
+                <i class="bi bi-truck"></i>
+            </div>
+            <div class="card-body">
+                <p>实时追踪物流与车辆调度。</p>
+                <button class="btn btn-sm btn-outline-info" @onclick='() => NavigateTo("tms/shipments")'>进入 TMS 系统</button>
+            </div>
+        </div>
+    </div>
+    <!-- QMS -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <span>QMS 质量管理</span>
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <div class="card-body">
+                <p>全流程质检与追溯。</p>
+                <button class="btn btn-sm btn-outline-success" @onclick='() => NavigateTo("qms/quality")'>进入 QMS 系统</button>
+            </div>
+        </div>
+    </div>
+    <!-- APS -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                <span>APS 高级排程</span>
+                <i class="bi bi-calendar-range"></i>
+            </div>
+            <div class="card-body">
+                <p>智能排产与产能平衡。</p>
+                <button class="btn btn-sm btn-outline-warning" @onclick='() => NavigateTo("aps/plans")'>进入 APS 系统</button>
+            </div>
+        </div>
+    </div>
+    <!-- EAM -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+                <span>EAM 资产管理</span>
+                <i class="bi bi-wrench-adjustable-circle-fill"></i>
+            </div>
+            <div class="card-body">
+                <p>设备维保与生命周期管理。</p>
+                <button class="btn btn-sm btn-outline-danger" @onclick='() => NavigateTo("eam/assets")'>进入 EAM 系统</button>
+            </div>
+        </div>
+    </div>
+    <!-- MOM -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                <span>MOM 制造运营</span>
+                <i class="bi bi-diagram-2-fill"></i>
+            </div>
+            <div class="card-body">
+                <p>车间级生产协同与管控。</p>
+                <button class="btn btn-sm btn-outline-secondary" @onclick='() => NavigateTo("mom/operations")'>进入 MOM 系统</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private void NavigateTo(string url)
+    {
+        NavigationManager.NavigateTo(url);
+    }
+}

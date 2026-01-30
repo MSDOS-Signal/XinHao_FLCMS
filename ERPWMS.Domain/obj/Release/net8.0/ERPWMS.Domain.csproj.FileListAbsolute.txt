@@ -1,0 +1,15 @@
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Domain\bin\Release\net8.0\ERPWMS.Domain.deps.json
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Domain\bin\Release\net8.0\ERPWMS.Domain.dll
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Domain\bin\Release\net8.0\ERPWMS.Domain.pdb
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Domain\bin\Release\net8.0\ERPWMS.Shared.dll
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Domain\bin\Release\net8.0\ERPWMS.Shared.pdb
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Domain\obj\Release\net8.0\ERPWMS.Domain.csproj.AssemblyReference.cache
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Domain\obj\Release\net8.0\ERPWMS.Domain.GeneratedMSBuildEditorConfig.editorconfig
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Domain\obj\Release\net8.0\ERPWMS.Domain.AssemblyInfoInputs.cache
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Domain\obj\Release\net8.0\ERPWMS.Domain.AssemblyInfo.cs
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Domain\obj\Release\net8.0\ERPWMS.Domain.csproj.CoreCompileInputs.cache
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Domain\obj\Release\net8.0\ERPWMS.D.366A9C14.Up2Date
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Domain\obj\Release\net8.0\ERPWMS.Domain.dll
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Domain\obj\Release\net8.0\refint\ERPWMS.Domain.dll
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Domain\obj\Release\net8.0\ERPWMS.Domain.pdb
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Domain\obj\Release\net8.0\ref\ERPWMS.Domain.dll

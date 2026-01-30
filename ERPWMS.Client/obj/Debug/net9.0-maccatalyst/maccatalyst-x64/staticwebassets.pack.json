@@ -1,0 +1,49 @@
+{
+  "Files": [
+    {
+      "Id": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Client\\obj\\Debug\\net9.0-maccatalyst\\maccatalyst-x64\\scopedcss\\bundle\\ERPWMS.Client.styles.css",
+      "PackagePath": "staticwebassets\\ERPWMS.Client.styles.css"
+    },
+    {
+      "Id": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Client\\wwwroot\\css\\app.css",
+      "PackagePath": "staticwebassets\\css\\app.css"
+    },
+    {
+      "Id": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Client\\wwwroot\\css\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\css\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Client\\wwwroot\\css\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\css\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Client\\wwwroot\\index.html",
+      "PackagePath": "staticwebassets\\index.html"
+    },
+    {
+      "Id": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Client\\wwwroot\\js\\echartsInterop.js",
+      "PackagePath": "staticwebassets\\js\\echartsInterop.js"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0-maccatalyst\\maccatalyst-x64\\staticwebassets\\msbuild.ERPWMS.Client.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0-maccatalyst\\maccatalyst-x64\\staticwebassets\\msbuild.ERPWMS.Client.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0-maccatalyst\\maccatalyst-x64\\staticwebassets\\msbuild.build.ERPWMS.Client.props",
+      "PackagePath": "build\\ERPWMS.Client.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0-maccatalyst\\maccatalyst-x64\\staticwebassets\\msbuild.buildMultiTargeting.ERPWMS.Client.props",
+      "PackagePath": "buildMultiTargeting\\ERPWMS.Client.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0-maccatalyst\\maccatalyst-x64\\staticwebassets\\msbuild.buildTransitive.ERPWMS.Client.props",
+      "PackagePath": "buildTransitive\\ERPWMS.Client.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

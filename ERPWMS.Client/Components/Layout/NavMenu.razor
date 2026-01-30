@@ -1,0 +1,60 @@
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="" style="white-space: normal; line-height: 1.2; font-size: 0.9rem;">
+            <img src="logo.svg" alt="Logo" style="height: 24px; width: 24px; margin-right: 8px; flex-shrink: 0;" />
+            <span>炘灏全链路核心管理系统</span>
+        </a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-speedometer2-nav-menu" aria-hidden="true"></span> 综合看板
+            </NavLink>
+        </div>
+        
+        <div class="nav-item-header text-light px-3 mt-3 mb-1 small text-uppercase fw-bold text-white-50">
+            核心业务
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="orders">
+                <span class="bi bi-cart-fill-nav-menu" aria-hidden="true"></span> ERP 订单
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="inventory">
+                <span class="bi bi-box-seam-fill-nav-menu" aria-hidden="true"></span> WMS 库存
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="workorders">
+                <span class="bi bi-tools-nav-menu" aria-hidden="true"></span> MES 工单
+            </NavLink>
+        </div>
+
+        <div class="nav-item-header text-light px-3 mt-3 mb-1 small text-uppercase fw-bold text-white-50">
+            设备与监控
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="devices">
+                <span class="bi bi-cpu-fill-nav-menu" aria-hidden="true"></span> SCADA 监控
+            </NavLink>
+        </div>
+        
+        <div class="nav-item-header text-light px-3 mt-3 mb-1 small text-uppercase fw-bold text-white-50">
+            扩展模块
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="modules">
+                <span class="bi bi-grid-3x3-gap-fill-nav-menu" aria-hidden="true"></span> 全链路系统
+            </NavLink>
+        </div>
+    </nav>
+</div>

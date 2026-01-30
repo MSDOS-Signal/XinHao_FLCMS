@@ -1,0 +1,11 @@
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Shared\bin\Debug\net8.0\ERPWMS.Shared.deps.json
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Shared\bin\Debug\net8.0\ERPWMS.Shared.dll
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Shared\bin\Debug\net8.0\ERPWMS.Shared.pdb
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Shared\obj\Debug\net8.0\ERPWMS.Shared.GeneratedMSBuildEditorConfig.editorconfig
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Shared\obj\Debug\net8.0\ERPWMS.Shared.AssemblyInfoInputs.cache
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Shared\obj\Debug\net8.0\ERPWMS.Shared.AssemblyInfo.cs
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Shared\obj\Debug\net8.0\ERPWMS.Shared.csproj.CoreCompileInputs.cache
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Shared\obj\Debug\net8.0\ERPWMS.Shared.dll
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Shared\obj\Debug\net8.0\refint\ERPWMS.Shared.dll
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Shared\obj\Debug\net8.0\ERPWMS.Shared.pdb
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Shared\obj\Debug\net8.0\ref\ERPWMS.Shared.dll

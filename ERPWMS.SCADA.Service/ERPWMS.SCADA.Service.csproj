@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-ERPWMS.SCADA.Service-eb80bea4-cdcf-4750-8f15-9482f73f0ce6</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ERPWMS.Application\ERPWMS.Application.csproj" />
+    <ProjectReference Include="..\ERPWMS.Infrastructure\ERPWMS.Infrastructure.csproj" />
+    <ProjectReference Include="..\ERPWMS.Shared\ERPWMS.Shared.csproj" />
+  </ItemGroup>
+</Project>

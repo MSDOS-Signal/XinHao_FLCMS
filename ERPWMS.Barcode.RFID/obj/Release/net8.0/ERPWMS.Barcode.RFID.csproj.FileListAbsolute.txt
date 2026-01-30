@@ -1,0 +1,15 @@
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Barcode.RFID\bin\Release\net8.0\ERPWMS.Barcode.RFID.deps.json
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Barcode.RFID\bin\Release\net8.0\ERPWMS.Barcode.RFID.dll
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Barcode.RFID\bin\Release\net8.0\ERPWMS.Barcode.RFID.pdb
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Barcode.RFID\bin\Release\net8.0\ERPWMS.Shared.dll
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Barcode.RFID\bin\Release\net8.0\ERPWMS.Shared.pdb
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Barcode.RFID\obj\Release\net8.0\ERPWMS.Barcode.RFID.csproj.AssemblyReference.cache
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Barcode.RFID\obj\Release\net8.0\ERPWMS.Barcode.RFID.GeneratedMSBuildEditorConfig.editorconfig
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Barcode.RFID\obj\Release\net8.0\ERPWMS.Barcode.RFID.AssemblyInfoInputs.cache
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Barcode.RFID\obj\Release\net8.0\ERPWMS.Barcode.RFID.AssemblyInfo.cs
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Barcode.RFID\obj\Release\net8.0\ERPWMS.Barcode.RFID.csproj.CoreCompileInputs.cache
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Barcode.RFID\obj\Release\net8.0\ERPWMS.B.728AB0D5.Up2Date
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Barcode.RFID\obj\Release\net8.0\ERPWMS.Barcode.RFID.dll
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Barcode.RFID\obj\Release\net8.0\refint\ERPWMS.Barcode.RFID.dll
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Barcode.RFID\obj\Release\net8.0\ERPWMS.Barcode.RFID.pdb
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Barcode.RFID\obj\Release\net8.0\ref\ERPWMS.Barcode.RFID.dll

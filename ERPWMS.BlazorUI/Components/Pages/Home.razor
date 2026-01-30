@@ -1,0 +1,177 @@
+@page "/"
+@using ERPWMS.Domain.Entities
+@using ERPWMS.Infrastructure.Persistence
+@using Microsoft.EntityFrameworkCore
+@using System.Text.Json
+@inject AppDbContext DbContext
+@rendermode InteractiveServer
+
+<PageTitle>综合看板</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="fw-bold text-dark">炘灏全链路核心管理系统 - 综合运营看板</h3>
+            <p class="text-muted">实时监控企业生产、仓储与物流状态</p>
+        </div>
+    </div>
+
+    <!-- 核心指标卡片 (Real Data) -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm bg-primary text-white h-100">
+                <div class="card-body">
+                    <h6 class="card-title opacity-75">总库存量 (WMS)</h6>
+                    <h2 class="display-6 fw-bold mb-0">@totalInventory.ToString("N0")</h2>
+                    <small>库存总价值: ¥@inventoryValue.ToString("N2")</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm bg-success text-white h-100">
+                <div class="card-body">
+                    <h6 class="card-title opacity-75">生产工单 (MES)</h6>
+                    <h2 class="display-6 fw-bold mb-0">@runningOrders / @totalOrders</h2>
+                    <small>良品率: @(avgYield.ToString("F1"))%</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm bg-warning text-dark h-100">
+                <div class="card-body">
+                    <h6 class="card-title opacity-75">设备状态 (SCADA)</h6>
+                    <h2 class="display-6 fw-bold mb-0">@onlineDevices / @totalDevices</h2>
+                    <small class="text-danger"><i class="bi bi-exclamation-circle"></i> @alarmDevices 台报警</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm bg-info text-white h-100">
+                <div class="card-body">
+                    <h6 class="card-title opacity-75">待处理订单 (ERP)</h6>
+                    <h2 class="display-6 fw-bold mb-0">@pendingOrders</h2>
+                    <small>总金额: ¥@pendingAmount.ToString("N2")</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 图表与列表区域 -->
+    <div class="row g-4">
+        <!-- 生产进度 -->
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold">🚀 实时生产进度 (Work Orders)</h5>
+                </div>
+                <div class="card-body">
+                    @if (workOrders == null)
+                    {
+                        <div class="spinner-border text-primary" role="status"></div>
+                    }
+                    else
+                    {
+                        @foreach (var wo in workOrders)
+                        {
+                            var progress = wo.PlanQty > 0 ? (int)((double)wo.CompletedQty / wo.PlanQty * 100) : 0;
+                            var color = wo.Status == "Running" ? "success" : (wo.Status == "Pending" ? "warning" : "secondary");
+                            
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>工单 @wo.WorkOrderNo (@wo.ProductName)</span>
+                                    <span class="text-@color">@progress% (@wo.Status)</span>
+                                </div>
+                                <div class="progress" style="height: 10px;">
+                                    <div class="progress-bar bg-@color" role="progressbar" style="width: @progress%"></div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- 快捷入口 -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold">⚡ 快捷入口</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="products" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-box-seam me-2 text-primary"></i> 物料管理</span>
+                        <span class="badge bg-light text-dark">基础</span>
+                    </a>
+                    <a href="wms/inbound" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-arrow-down-square me-2 text-success"></i> 创建入库单</span>
+                        <span class="badge bg-light text-dark">WMS</span>
+                    </a>
+                    <a href="mes/workorders" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-card-checklist me-2 text-warning"></i> 生产报工</span>
+                        <span class="badge bg-light text-dark">MES</span>
+                    </a>
+                    <a href="mes/scada" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-activity me-2 text-danger"></i> 设备报警处理</span>
+                        <span class="badge bg-danger rounded-pill">@alarmDevices</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    // Dashboard Metrics
+    private decimal totalInventory;
+    private decimal inventoryValue;
+    private int runningOrders;
+    private int totalOrders;
+    private decimal avgYield;
+    private int onlineDevices;
+    private int totalDevices;
+    private int alarmDevices;
+    private int pendingOrders;
+    private decimal pendingAmount;
+
+    private List<WorkOrder>? workOrders;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDashboardData();
+    }
+
+    private async Task LoadDashboardData()
+    {
+        try
+        {
+            // 1. Inventory Metrics
+            var inventories = await DbContext.Inventories.AsNoTracking().ToListAsync();
+            totalInventory = inventories.Sum(i => i.Quantity);
+            // Simple logic: Assume avg price 100 if product link is complex for dashboard
+            // In real world, join Product table
+            inventoryValue = totalInventory * 50; 
+
+            // 2. MES Metrics
+            var wos = await DbContext.WorkOrders.AsNoTracking().ToListAsync();
+            workOrders = wos.Take(5).ToList(); // Show top 5
+            totalOrders = wos.Count;
+            runningOrders = wos.Count(w => w.Status == "Running");
+            avgYield = wos.Any() ? wos.Average(w => w.YieldRate) : 0;
+
+            // 3. SCADA Metrics
+            var devices = await DbContext.Devices.AsNoTracking().ToListAsync();
+            totalDevices = devices.Count;
+            onlineDevices = devices.Count(d => d.Status == "Running");
+            alarmDevices = devices.Count(d => d.Status == "Alarm");
+
+            // 4. ERP Metrics
+            var orders = await DbContext.Orders.AsNoTracking().ToListAsync();
+            pendingOrders = orders.Count(o => o.Status != "Completed");
+            pendingAmount = orders.Where(o => o.Status != "Completed").Sum(o => o.TotalAmount);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Dashboard Load Error: {ex.Message}");
+        }
+    }
+}

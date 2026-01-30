@@ -1,0 +1,360 @@
+@page "/tms/shipments"
+@inject EnterpriseService EnterpriseService
+@inject OrderService OrderService
+@inject IJSRuntime JSRuntime
+
+<h3 class="mb-3 text-white">TMS 物流运输管理</h3>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-dark text-white border-secondary shadow">
+            <div class="card-body">
+                <h5 class="card-title text-info">在途运单</h5>
+                <p class="card-text fs-4 fw-bold">@shipments?.Count(s => s.Status == "Shipped")</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-dark text-white border-secondary shadow">
+            <div class="card-body">
+                <h5 class="card-title text-success">今日签收</h5>
+                <p class="card-text fs-4 fw-bold">@shipments?.Count(s => s.Status == "Delivered")</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card bg-dark text-white border-secondary shadow mb-4">
+    <div class="card-header border-secondary py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-white">运单列表</h6>
+        <button class="btn btn-primary btn-sm" @onclick="ShowCreateModal">
+            <i class="bi bi-plus-lg"></i> 新增运单
+        </button>
+    </div>
+    <div class="card-body">
+        @if (shipments == null)
+        {
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-light" role="status">
+                    <span class="visually-hidden">加载中...</span>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th class="text-white">运单号</th>
+                            <th class="text-white">关联订单</th>
+                            <th class="text-white">承运商</th>
+                            <th class="text-white">司机/车辆</th>
+                            <th class="text-white">起运地/目的地</th>
+                            <th class="text-white">物流单号</th>
+                            <th class="text-white">状态</th>
+                            <th class="text-white">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in shipments)
+                        {
+                            <tr>
+                                <td class="fw-bold text-white">@item.ShipmentNo</td>
+                                <td class="text-white-50">@item.OrderNo</td>
+                                <td><span class="badge bg-secondary text-white border border-light">@item.Carrier</span></td>
+                                <td>
+                                    <div class="text-white"><i class="bi bi-person"></i> @item.DriverName</div>
+                                    <small class="text-white-50"><i class="bi bi-truck"></i> @item.VehicleNo</small>
+                                </td>
+                                <td>
+                                    <div><span class="badge bg-primary badge-sm" style="font-size: 0.6rem;">起</span> <span class="text-white">@item.Origin</span></div>
+                                    <div class="mt-1"><span class="badge bg-success badge-sm" style="font-size: 0.6rem;">终</span> <span class="text-white">@item.Destination</span></div>
+                                </td>
+                                <td class="font-monospace text-warning">@item.TrackingNumber</td>
+                                <td>
+                                    @if (item.Status == "Shipped")
+                                    {
+                                        <span class="badge bg-info text-dark"><i class="bi bi-truck"></i> 运输中</span>
+                                    }
+                                    else if (item.Status == "Delivered")
+                                    {
+                                        <span class="badge bg-success"><i class="bi bi-check-all"></i> 已送达</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@item.Status</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-sm btn-outline-primary" @onclick="() => EditShipment(item)" title="编辑运单">
+                                            <i class="bi bi-pencil"></i> 编辑
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-info" @onclick="() => ShowTracking(item)" title="查看轨迹">
+                                            <i class="bi bi-map"></i> 轨迹
+                                        </button>
+                                        @if(item.Status != "Delivered")
+                                        {
+                                            <button class="btn btn-sm btn-outline-success" @onclick="() => SignShipment(item)" title="签收运单">
+                                                <i class="bi bi-check2-square"></i> 签收
+                                            </button>
+                                        }
+                                        <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteShipment(item.Id)" title="删除运单">
+                                            <i class="bi bi-trash"></i> 删除
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Create Modal -->
+@if (showCreateModal)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.7);">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">@(newShipment.Id == Guid.Empty ? "新增运单" : "编辑运单")</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseCreateModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label text-white-50">运单号</label>
+                        <input type="text" class="form-control bg-dark text-white border-secondary" @bind="newShipment.ShipmentNo" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-white">关联订单</label>
+                        <select class="form-select bg-dark text-white border-secondary" @bind="newShipment.OrderNo">
+                            <option value="">-- 请选择订单 --</option>
+                            @foreach(var order in orders)
+                            {
+                                <option value="@order.OrderNo">@order.OrderNo (@order.CustomerOrSupplier)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-white">承运商 (来自SRM)</label>
+                        <select class="form-select bg-dark text-white border-secondary" @bind="newShipment.Carrier">
+                            <option value="">-- 请选择承运商 --</option>
+                            @foreach(var sup in suppliers)
+                            {
+                                <option value="@sup.SupplierName">@sup.SupplierName (@sup.Category)</option>
+                            }
+                            <option value="顺丰速运">顺丰速运</option>
+                            <option value="京东物流">京东物流</option>
+                            <option value="中通快递">中通快递</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-white">物流单号</label>
+                        <input type="text" class="form-control bg-dark text-white border-secondary" @bind="newShipment.TrackingNumber" />
+                    </div>
+                    <div class="row">
+                         <div class="col-md-6 mb-3">
+                            <label class="form-label text-white">司机</label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" @bind="newShipment.DriverName" />
+                        </div>
+                         <div class="col-md-6 mb-3">
+                            <label class="form-label text-white">车牌号</label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" @bind="newShipment.VehicleNo" />
+                        </div>
+                    </div>
+                     <div class="row">
+                         <div class="col-md-6 mb-3">
+                            <label class="form-label text-white">起运地</label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" @bind="newShipment.Origin" />
+                        </div>
+                         <div class="col-md-6 mb-3">
+                            <label class="form-label text-white">目的地</label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" @bind="newShipment.Destination" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseCreateModal">取消</button>
+                    <button type="button" class="btn btn-primary" @onclick="SaveShipment">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Tracking Modal -->
+@if (showTrackingModal && selectedShipment != null)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.7);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark text-white border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">物流轨迹追踪 - @selectedShipment.TrackingNumber</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseTrackingModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="timeline p-2">
+                        @if (selectedShipment.Status == "Delivered")
+                        {
+                             <div class="card mb-3 border-0 border-start border-success border-4 shadow bg-secondary text-white">
+                                <div class="card-body">
+                                    <h6 class="card-title text-success fw-bold"><i class="bi bi-check-circle-fill"></i> 已签收</h6>
+                                    <p class="card-text small text-white">@selectedShipment.ActualArrival?.ToString("yyyy-MM-dd HH:mm") - 客户已签收。</p>
+                                </div>
+                            </div>
+                        }
+                        @if (selectedShipment.Status == "Delivered" || selectedShipment.Status == "Shipped")
+                        {
+                            <div class="card mb-3 border-0 border-start border-primary border-4 shadow bg-dark text-white border-secondary">
+                                <div class="card-body">
+                                    <h6 class="card-title text-info fw-bold"><i class="bi bi-truck"></i> 运输中</h6>
+                                    <p class="card-text small text-white-50">快件运输中...</p>
+                                </div>
+                            </div>
+                        }
+                        <div class="card mb-3 border-0 border-start border-secondary border-4 shadow bg-dark text-white border-secondary">
+                            <div class="card-body">
+                                <h6 class="card-title text-light fw-bold"><i class="bi bi-truck"></i> 运输中</h6>
+                                <p class="card-text small text-white-50">承运商 [@selectedShipment.Carrier] 运输中。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseTrackingModal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<ERPWMS.Domain.Entities.Shipment>? shipments;
+    private List<ERPWMS.Domain.Entities.Order> orders = new();
+    private List<ERPWMS.Domain.Entities.Supplier> suppliers = new();
+    private ERPWMS.Domain.Entities.Shipment? selectedShipment;
+    private ERPWMS.Domain.Entities.Shipment newShipment = new();
+    private bool showTrackingModal = false;
+    private bool showCreateModal = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            var t1 = EnterpriseService.GetShipmentsAsync();
+            var t2 = OrderService.GetAllAsync();
+            var t3 = EnterpriseService.GetSuppliersAsync();
+            await Task.WhenAll(t1, t2, t3);
+            shipments = t1.Result;
+            orders = t2.Result;
+            suppliers = t3.Result;
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("console.error", $"Error loading data: {ex.Message}");
+            shipments = new List<ERPWMS.Domain.Entities.Shipment>();
+        }
+    }
+
+    private void ShowTracking(ERPWMS.Domain.Entities.Shipment shipment)
+    {
+        selectedShipment = shipment;
+        showTrackingModal = true;
+    }
+
+    private void CloseTrackingModal()
+    {
+        showTrackingModal = false;
+        selectedShipment = null;
+    }
+
+    private void ShowCreateModal()
+    {
+        newShipment = new ERPWMS.Domain.Entities.Shipment
+        {
+            ShipmentNo = $"SHP-{DateTime.Now:yyyyMMddHHmmss}",
+            Status = "Shipped",
+            Carrier = "顺丰速运"
+        };
+        newShipment.Id = Guid.Empty; // Ensure it's new
+        showCreateModal = true;
+    }
+
+    private void EditShipment(ERPWMS.Domain.Entities.Shipment shipment)
+    {
+        newShipment = new ERPWMS.Domain.Entities.Shipment
+        {
+            Id = shipment.Id,
+            ShipmentNo = shipment.ShipmentNo,
+            OrderNo = shipment.OrderNo,
+            Carrier = shipment.Carrier,
+            DriverName = shipment.DriverName,
+            DriverPhone = shipment.DriverPhone,
+            VehicleNo = shipment.VehicleNo,
+            Origin = shipment.Origin,
+            Destination = shipment.Destination,
+            Status = shipment.Status,
+            TrackingNumber = shipment.TrackingNumber,
+            ShippingCost = shipment.ShippingCost,
+            EstimatedArrival = shipment.EstimatedArrival,
+            ActualArrival = shipment.ActualArrival
+        };
+        showCreateModal = true;
+    }
+
+    private void CloseCreateModal()
+    {
+        showCreateModal = false;
+    }
+
+    private async Task SaveShipment()
+    {
+        if (string.IsNullOrWhiteSpace(newShipment.OrderNo))
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "请输入关联订单号");
+            return;
+        }
+
+        if (newShipment.Id == Guid.Empty)
+        {
+            await EnterpriseService.AddShipmentAsync(newShipment);
+        }
+        else
+        {
+            await EnterpriseService.UpdateShipmentAsync(newShipment);
+        }
+        showCreateModal = false;
+        await LoadData();
+    }
+
+    private async Task SignShipment(ERPWMS.Domain.Entities.Shipment shipment)
+    {
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", $"确定要签收运单 {shipment.ShipmentNo} 吗？");
+        if (confirmed)
+        {
+            shipment.Status = "Delivered";
+            shipment.ActualArrival = DateTime.Now; // Record actual arrival time
+            await EnterpriseService.UpdateShipmentAsync(shipment);
+            await LoadData();
+        }
+    }
+
+    private async Task DeleteShipment(Guid id)
+    {
+         var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "确定要删除该运单吗？");
+        if (confirmed)
+        {
+            await EnterpriseService.DeleteShipmentAsync(id);
+            await LoadData();
+        }
+    }
+}

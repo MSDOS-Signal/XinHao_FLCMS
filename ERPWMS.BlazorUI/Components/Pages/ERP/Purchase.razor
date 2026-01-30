@@ -1,0 +1,162 @@
+@page "/erp/purchase"
+@using ERPWMS.Domain.Entities
+@using ERPWMS.Infrastructure.Persistence
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext DbContext
+@rendermode InteractiveServer
+
+<PageTitle>采购管理</PageTitle>
+
+<div class="container-fluid">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 d-flex justify-content-between">
+            <h5 class="mb-0 text-primary fw-bold"><i class="bi bi-cart3 me-2"></i>采购订单管理</h5>
+            <button class="btn btn-primary" @onclick="CreateOrder"><i class="bi bi-plus-circle"></i> 新增采购单</button>
+        </div>
+        <div class="card-body">
+            @if (orders == null)
+            {
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>单号</th>
+                                <th>供应商</th>
+                                <th>采购日期</th>
+                                <th>金额</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in orders)
+                            {
+                                <tr>
+                                    <td>@item.OrderNo</td>
+                                    <td>@item.CustomerOrSupplier</td>
+                                    <td>@item.OrderDate.ToString("yyyy-MM-dd")</td>
+                                    <td>¥ @item.TotalAmount.ToString("N2")</td>
+                                    <td>
+                                        @if(item.Status == "Completed") { <span class="badge bg-success">已完成</span> }
+                                        else if(item.Status == "Processing") { <span class="badge bg-warning text-dark">进行中</span> }
+                                        else { <span class="badge bg-secondary">@item.Status</span> }
+                                    </td>
+                                    <td>
+                                        @if(item.Status != "Completed")
+                                        {
+                                            <button class="btn btn-sm btn-success" @onclick="() => ProcessOrder(item)">收货</button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-sm btn-outline-secondary" disabled>已完成</button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Create Order Modal -->
+@if (showCreateModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">新增采购订单</h5>
+                    <button type="button" class="btn-close" @onclick="CloseCreateModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">供应商</label>
+                        <select class="form-select" @bind="newOrder.CustomerOrSupplier">
+                            <option value="">-- 请选择供应商 --</option>
+                            @foreach (var sup in suppliers)
+                            {
+                                <option value="@sup.SupplierName">@sup.SupplierName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">订单金额</label>
+                        <input type="number" class="form-control" @bind="newOrder.TotalAmount" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseCreateModal">取消</button>
+                    <button type="button" class="btn btn-primary" @onclick="SaveNewOrder">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<Order>? orders;
+    private List<Supplier> suppliers = new();
+    private bool showCreateModal = false;
+    private Order newOrder = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+        suppliers = await DbContext.Suppliers.ToListAsync();
+    }
+
+    private async Task LoadData()
+    {
+        orders = await DbContext.Orders
+            .Where(o => o.Type == "Purchase")
+            .OrderByDescending(o => o.OrderDate)
+            .ToListAsync();
+    }
+
+    private void CreateOrder()
+    {
+        newOrder = new Order
+        {
+            Type = "Purchase",
+            OrderDate = DateTime.Now,
+            Status = "Processing",
+            CreatedBy = "Admin",
+            CreatedTime = DateTime.Now
+        };
+        showCreateModal = true;
+    }
+
+    private void CloseCreateModal()
+    {
+        showCreateModal = false;
+    }
+
+    private async Task SaveNewOrder()
+    {
+        newOrder.OrderNo = $"PO-{DateTime.Now:yyyyMMdd}-{new Random().Next(1000, 9999)}";
+        DbContext.Orders.Add(newOrder);
+        await DbContext.SaveChangesAsync();
+        showCreateModal = false;
+        await LoadData();
+    }
+
+    private async Task ProcessOrder(Order order)
+    {
+        var dbOrder = await DbContext.Orders.FindAsync(order.Id);
+        if (dbOrder != null)
+        {
+            dbOrder.Status = "Completed";
+            await DbContext.SaveChangesAsync();
+            await LoadData();
+        }
+    }
+}

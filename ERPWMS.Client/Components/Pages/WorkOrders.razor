@@ -1,0 +1,213 @@
+@page "/workorders"
+@inject WorkOrderService WorkOrderService
+@inject IJSRuntime JSRuntime
+
+<h3 class="mb-3">MES 生产工单管理</h3>
+
+<!-- 
+<div class="mb-3">
+    <button class="btn btn-primary" @onclick="ShowCreateModal">
+        <i class="bi bi-plus-circle"></i> 下达新工单
+    </button>
+</div>
+-->
+<div class="mb-3">
+    <div class="alert alert-info border-info bg-dark text-white">
+        <i class="bi bi-info-circle-fill me-2"></i> 请前往 <strong>APS 高级排程</strong> 模块下达生产计划，MES 将自动接收工单。
+    </div>
+</div>
+
+@if (workOrders == null)
+{
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">加载中...</span>
+    </div>
+}
+else
+{
+    <div class="row">
+        @foreach (var wo in workOrders)
+        {
+            <div class="col-md-6 col-xl-4 mb-4">
+                <div class="card shadow h-100 border-left-primary">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3 flex-wrap">
+                            <div class="d-flex flex-column">
+                                <h5 class="card-title text-primary font-weight-bold mb-1">@wo.WorkOrderNo</h5>
+                                @if (!string.IsNullOrEmpty(wo.PlanNo))
+                                {
+                                    <small class="text-muted" style="font-size: 0.75rem;">APS: @wo.PlanNo</small>
+                                }
+                            </div>
+                            <div class="ms-2 mt-1">
+                                @if (wo.Status == "Completed")
+                                {
+                                    <span class="badge bg-success rounded-pill">已完工</span>
+                                }
+                                else if (wo.Status == "Running")
+                                {
+                                    <span class="badge bg-primary rounded-pill">进行中</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary rounded-pill">待开工</span>
+                                }
+                            </div>
+                        </div>
+                        <h6 class="card-subtitle mb-2 text-muted">产品: @wo.ProductName</h6>
+                        
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <small class="text-muted">计划数量</small>
+                                <p class="h5">@wo.PlanQty</p>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted">完成进度</small>
+                                <p class="h5">@wo.CompletedQty <span class="text-muted small">/ @wo.PlanQty</span></p>
+                            </div>
+                        </div>
+
+                        <div class="progress mt-2 mb-3" style="height: 10px;">
+                            <div class="progress-bar @(wo.Status == "Completed" ? "bg-success" : "bg-primary")" 
+                                 role="progressbar" 
+                                 style="width: @(wo.PlanQty > 0 ? Math.Round((double)wo.CompletedQty / wo.PlanQty * 100) : 0)%" 
+                                 aria-valuenow="@wo.CompletedQty" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="@wo.PlanQty">
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end">
+                            @if (wo.Status != "Completed")
+                            {
+                                <button class="btn btn-outline-danger me-2" @onclick="() => RevertProgress(wo)">
+                                    <i class="bi bi-dash"></i> 撤回
+                                </button>
+                                <button class="btn btn-outline-primary" @onclick="() => ReportProgress(wo)">
+                                    <i class="bi bi-play-fill"></i> 报工 (+10%)
+                                </button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-outline-secondary disabled">
+                                    <i class="bi bi-check2-all"></i> 已归档
+                                </button>
+                            }
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent text-muted small">
+                        创建时间: @wo.CreatedTime.ToString("yyyy-MM-dd HH:mm")
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<!-- Create WorkOrder Modal -->
+@if (showCreateModal)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white border-primary">
+                <div class="modal-header border-primary">
+                    <h5 class="modal-title">下达生产工单</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseCreateModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">产品名称</label>
+                        <input type="text" class="form-control bg-dark text-white border-primary" @bind="newWorkOrder.ProductName" placeholder="例如: 高精密轴承 X-200" />
+                    </div>
+                    @if(!string.IsNullOrEmpty(newWorkOrder.PlanNo))
+                    {
+                        <div class="mb-3">
+                            <label class="form-label">关联计划 (APS)</label>
+                            <input type="text" class="form-control bg-secondary text-white border-primary" @bind="newWorkOrder.PlanNo" readonly />
+                        </div>
+                    }
+                    <div class="mb-3">
+                        <label class="form-label">计划数量</label>
+                        <input type="number" class="form-control bg-dark text-white border-primary" @bind="newWorkOrder.PlanQty" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">生产线</label>
+                        <select class="form-select bg-dark text-white border-primary" @bind="newWorkOrder.LineCode">
+                            <option value="Line-A">产线 A (总装)</option>
+                            <option value="Line-B">产线 B (机加工)</option>
+                            <option value="Line-C">产线 C (包装)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer border-primary">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseCreateModal">取消</button>
+                    <button type="button" class="btn btn-primary" @onclick="SaveWorkOrder">下达工单</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<ERPWMS.Domain.Entities.WorkOrder>? workOrders;
+    private bool showCreateModal = false;
+    private ERPWMS.Domain.Entities.WorkOrder newWorkOrder = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadWorkOrders();
+    }
+
+    private async Task LoadWorkOrders()
+    {
+        workOrders = await WorkOrderService.GetAllAsync();
+    }
+
+    private void ShowCreateModal()
+    {
+        newWorkOrder = new ERPWMS.Domain.Entities.WorkOrder
+        {
+            WorkOrderNo = $"WO-{DateTime.Now:yyyyMMddHHmmss}",
+            CreatedTime = DateTime.Now,
+            Status = "Pending",
+            CompletedQty = 0,
+            PlanQty = 100,
+            LineCode = "Line-A"
+        };
+        showCreateModal = true;
+    }
+
+    private void CloseCreateModal()
+    {
+        showCreateModal = false;
+    }
+
+    private async Task SaveWorkOrder()
+    {
+        if (string.IsNullOrWhiteSpace(newWorkOrder.ProductName))
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "请输入产品名称");
+            return;
+        }
+
+        await WorkOrderService.CreateAsync(newWorkOrder);
+        showCreateModal = false;
+        await LoadWorkOrders();
+    }
+
+    private async Task ReportProgress(ERPWMS.Domain.Entities.WorkOrder wo)
+    {
+        if (await WorkOrderService.ReportProgressAsync(wo.Id))
+        {
+            await LoadWorkOrders();
+        }
+    }
+
+    private async Task RevertProgress(ERPWMS.Domain.Entities.WorkOrder wo)
+    {
+        if (await WorkOrderService.RevertProgressAsync(wo.Id))
+        {
+            await LoadWorkOrders();
+        }
+    }
+}

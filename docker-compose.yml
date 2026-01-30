@@ -1,0 +1,49 @@
+version: '3.4'
+
+services:
+  erpwms.webapi:
+    image: ${DOCKER_REGISTRY-}erpwmswebapi
+    build:
+      context: .
+      dockerfile: ERPWMS.WebAPI/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      # Docker Container to Host SQL Server requires special handling for connection string
+      # 1. Use 'host.docker.internal' instead of 'localhost' or 'SIGNALXH'
+      # 2. Windows Auth (Integrated Security=True) is NOT supported in Linux Containers easily. 
+      #    Please update this to User ID/Password (SQL Auth) or run natively on Windows.
+      - ConnectionStrings__DefaultConnection=Server=host.docker.internal;Database=ERPWMS_MES_EnterpriseDb;User Id=sa;Password=Key-1122;TrustServerCertificate=True;
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      # - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+  erpwms.wcs.service:
+    image: ${DOCKER_REGISTRY-}erpwmswcsservice
+    build:
+      context: .
+      dockerfile: ERPWMS.WCS.Service/Dockerfile
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=host.docker.internal;Database=ERPWMS_MES_EnterpriseDb;User Id=sa;Password=Key-1122;TrustServerCertificate=True;
+
+  erpwms.scada.service:
+    image: ${DOCKER_REGISTRY-}erpwmsscadaservice
+    build:
+      context: .
+      dockerfile: ERPWMS.SCADA.Service/Dockerfile
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=host.docker.internal;Database=ERPWMS_MES_EnterpriseDb;User Id=sa;Password=Key-1122;TrustServerCertificate=True;
+
+  erpwms.job.service:
+    image: ${DOCKER_REGISTRY-}erpwmsjobservice
+    build:
+      context: .
+      dockerfile: ERPWMS.Job.Service/Dockerfile
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=host.docker.internal;Database=ERPWMS_MES_EnterpriseDb;User Id=sa;Password=Key-1122;TrustServerCertificate=True;
+

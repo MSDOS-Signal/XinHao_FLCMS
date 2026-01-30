@@ -1,0 +1,108 @@
+:root {
+    --primary-bg: #0f172a;
+    --secondary-bg: #1e293b;
+    --accent-color: #3b82f6;
+    --text-color: #e2e8f0;
+    --card-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body {
+    background-color: var(--primary-bg);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.glass-panel {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border: var(--glass-border);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.sidebar {
+    background-image: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+    border-right: var(--glass-border);
+}
+
+.nav-item a {
+    color: #94a3b8;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin: 4px 8px;
+}
+
+.nav-item a:hover, .nav-item a.active {
+    color: #fff;
+    background: rgba(59, 130, 246, 0.2);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+}
+
+.metric-card {
+    transition: transform 0.2s;
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+}
+
+.table {
+    color: #ffffff !important;
+    background-color: transparent !important;
+}
+
+.table thead th {
+    color: #60a5fa !important; /* Light blue for headers */
+    font-weight: 700;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    font-size: 1.05rem;
+    background-color: rgba(15, 23, 42, 0.8) !important;
+}
+
+.table tbody td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    vertical-align: middle;
+    font-weight: 500;
+}
+
+.table-hover tbody tr:hover {
+    color: #ffffff !important;
+    background-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+.card {
+    background-color: var(--card-bg);
+    border: var(--glass-border);
+    color: var(--text-color);
+}
+
+.card-header {
+    border-bottom: var(--glass-border);
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+    --bs-table-accent-bg: rgba(255, 255, 255, 0.02);
+    color: var(--text-color);
+}
+
+.list-group-item {
+    background-color: transparent;
+    color: var(--text-color);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #0f172a; 
+}
+::-webkit-scrollbar-thumb {
+    background: #334155; 
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #475569; 
+}

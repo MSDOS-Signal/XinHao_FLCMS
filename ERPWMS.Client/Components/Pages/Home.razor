@@ -1,0 +1,17 @@
+@page "/"
+@inject NavigationManager NavigationManager
+
+<div class="text-center mt-5">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">正在加载企业综合看板...</p>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        // 自动跳转到 Dashboard
+        NavigationManager.NavigateTo("dashboard");
+    }
+}

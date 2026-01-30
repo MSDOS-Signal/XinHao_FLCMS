@@ -1,0 +1,380 @@
+@page "/aps/plans"
+@inject EnterpriseService EnterpriseService
+@inject InventoryService InventoryService
+@inject WorkOrderService WorkOrderService
+@inject IJSRuntime JSRuntime
+
+<h3 class="mb-3">APS 高级排程</h3>
+
+<div class="d-flex justify-content-end mb-3">
+    <button class="btn btn-warning text-dark" @onclick="ShowCreateModal">
+        <i class="bi bi-plus-lg"></i> 新增排产计划
+    </button>
+</div>
+
+@if (plans == null)
+{
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">加载中...</span>
+    </div>
+}
+else
+{
+    <div class="row">
+        @foreach (var plan in plans)
+        {
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card shadow h-100 border-left-warning">
+                    <div class="card-header bg-transparent d-flex justify-content-between align-items-start">
+                        <div class="d-flex flex-column">
+                            <span class="fw-bold text-white fs-5">@plan.PlanNo</span>
+                            @if (!string.IsNullOrEmpty(plan.WorkOrderNo))
+                            {
+                                <div class="mt-1">
+                                    <span class="badge bg-secondary text-white-50 border border-secondary" style="font-weight: normal;">
+                                        <i class="bi bi-link-45deg"></i> MES: @plan.WorkOrderNo
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-warning text-dark me-2">@plan.Priority</span>
+                            <div class="dropdown">
+                                <button class="btn btn-link text-white p-0" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton1">
+                                    <li><a class="dropdown-item" href="javascript:void(0)" @onclick="() => EditPlan(plan)"><i class="bi bi-pencil me-2"></i> 编辑</a></li>
+                                    <li><a class="dropdown-item" href="javascript:void(0)" @onclick="() => ShowProgressModal(plan)"><i class="bi bi-speedometer2 me-2"></i> 汇报进度</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="javascript:void(0)" @onclick="() => DeletePlan(plan.Id)"><i class="bi bi-trash me-2"></i> 删除</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">@plan.ProductCode</h5>
+                        <div class="mb-3">
+                            <small class="text-muted d-block">排产数量: <strong class="text-white">@plan.Quantity</strong></small>
+                            <small class="text-muted d-block">完成数量: <strong class="text-success">@plan.CompletedQuantity</strong></small>
+                        </div>
+                        
+                        <div class="progress mb-3 position-relative" style="height: 20px; background-color: #444; cursor: pointer;" @onclick="() => ShowProgressModal(plan)">
+                            <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated" role="progressbar" 
+                                 style="width: @(plan.Quantity > 0 ? (double)plan.CompletedQuantity/plan.Quantity*100 : 0)%; min-width: 2em;" 
+                                 aria-valuenow="@plan.CompletedQuantity" aria-valuemin="0" aria-valuemax="@plan.Quantity">
+                                 <span class="text-dark fw-bold small">@(plan.Quantity > 0 ? ((double)plan.CompletedQuantity/plan.Quantity*100).ToString("F0") : "0")%</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between text-muted small">
+                            <span><i class="bi bi-calendar-event"></i> @plan.StartDate.ToString("MM-dd")</span>
+                            <span><i class="bi bi-arrow-right"></i></span>
+                            <span><i class="bi bi-calendar-check"></i> @plan.EndDate.ToString("MM-dd")</span>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between align-items-center">
+                        <span class="badge bg-secondary">@plan.Status</span>
+                        <div>
+                            @if(plan.Status == "Planned" || plan.Status == "Draft" || plan.Status == "Confirmed")
+                            {
+                                @if(string.IsNullOrEmpty(plan.WorkOrderNo))
+                                {
+                                    <button class="btn btn-sm btn-primary w-100" @onclick='() => ReleaseAndStart(plan)'>
+                                        <i class="bi bi-rocket-takeoff-fill me-1"></i> 下达MES并开始
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-sm btn-success py-0" @onclick='() => UpdateStatus(plan, "InProgress")'>开始</button>
+                                }
+                            }
+                            else if(plan.Status == "InProgress")
+                            {
+                                <button class="btn btn-sm btn-primary py-0" @onclick='() => UpdateStatus(plan, "Completed")'>完成</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<!-- Create Modal -->
+@if (showCreateModal)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white border-warning">
+                <div class="modal-header border-warning">
+                    <h5 class="modal-title text-warning">@(newPlan.Id == Guid.Empty ? "新增排产计划" : "编辑排产计划")</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseCreateModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">计划编号</label>
+                        <input type="text" class="form-control bg-secondary text-white border-0" @bind="newPlan.PlanNo" readonly />
+                    </div>
+                    @if (!string.IsNullOrEmpty(newPlan.WorkOrderNo))
+                    {
+                        <div class="mb-3">
+                            <label class="form-label">关联工单 (MES)</label>
+                            <input type="text" class="form-control bg-secondary text-white border-0" @bind="newPlan.WorkOrderNo" readonly />
+                        </div>
+                    }
+                    <div class="mb-3">
+                        <label class="form-label">产品代码</label>
+                        <select class="form-select bg-dark text-white border-warning" @bind="newPlan.ProductCode">
+                            <option value="">-- 请选择产品 --</option>
+                            @foreach(var item in inventories.Select(i => new { i.ProductCode, i.ProductName }).Distinct())
+                            {
+                                <option value="@item.ProductCode">@item.ProductCode - @item.ProductName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">排产数量</label>
+                        <input type="number" class="form-control bg-dark text-white border-warning" @bind="newPlan.Quantity" />
+                    </div>
+                    @if(newPlan.Id != Guid.Empty)
+                    {
+                         <div class="mb-3">
+                            <label class="form-label">完成数量</label>
+                            <input type="number" class="form-control bg-dark text-white border-warning" @bind="newPlan.CompletedQuantity" />
+                        </div>
+                    }
+                    <div class="mb-3">
+                        <label class="form-label">优先级</label>
+                        <select class="form-select bg-dark text-white border-warning" @bind="newPlan.Priority">
+                            <option value="High">高</option>
+                            <option value="Medium">中</option>
+                            <option value="Low">低</option>
+                        </select>
+                    </div>
+                     <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">开始日期</label>
+                            <input type="date" class="form-control bg-dark text-white border-warning" @bind="newPlan.StartDate" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">结束日期</label>
+                            <input type="date" class="form-control bg-dark text-white border-warning" @bind="newPlan.EndDate" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-warning">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseCreateModal">取消</button>
+                    <button type="button" class="btn btn-warning" @onclick="SavePlan">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Progress Modal -->
+@if (showProgressModal && selectedPlan != null)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white border-info">
+                <div class="modal-header border-info">
+                    <h5 class="modal-title">汇报进度 - @selectedPlan.PlanNo</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseProgressModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">当前进度</label>
+                        <div class="progress mb-2" style="height: 20px; background-color: #444;">
+                             <div class="progress-bar bg-info" role="progressbar" 
+                                  style="width: @(selectedPlan.Quantity > 0 ? (double)progressQuantity/selectedPlan.Quantity*100 : 0)%;" 
+                                  aria-valuenow="@progressQuantity" aria-valuemin="0" aria-valuemax="@selectedPlan.Quantity">
+                                  @progressQuantity / @selectedPlan.Quantity
+                             </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">更新完成数量</label>
+                        <input type="number" class="form-control bg-dark text-white border-info" @bind="progressQuantity" />
+                        <div class="form-text text-white-50">输入当前已完成的总数量 (最大 @selectedPlan.Quantity)</div>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                         <button class="btn btn-outline-light btn-sm" @onclick="() => progressQuantity = 0">重置为 0</button>
+                         <button class="btn btn-outline-success btn-sm" @onclick="() => progressQuantity = selectedPlan.Quantity">一键完成 (100%)</button>
+                    </div>
+                </div>
+                <div class="modal-footer border-info">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseProgressModal">取消</button>
+                    <button type="button" class="btn btn-info" @onclick="SaveProgress">保存进度</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<ERPWMS.Domain.Entities.ProductionPlan>? plans;
+    private List<ERPWMS.Domain.Entities.Inventory> inventories = new();
+    private ERPWMS.Domain.Entities.ProductionPlan newPlan = new();
+    private ERPWMS.Domain.Entities.ProductionPlan? selectedPlan;
+    private bool showCreateModal = false;
+    private bool showProgressModal = false;
+    private int progressQuantity = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        var t1 = EnterpriseService.GetPlansAsync();
+        var t2 = InventoryService.GetAllAsync();
+        await Task.WhenAll(t1, t2);
+        plans = t1.Result;
+        inventories = t2.Result;
+    }
+
+    private void ShowCreateModal()
+    {
+        newPlan = new ERPWMS.Domain.Entities.ProductionPlan
+        {
+            PlanNo = $"PLN-{DateTime.Now:yyyyMMddHHmmss}",
+            StartDate = DateTime.Now,
+            EndDate = DateTime.Now.AddDays(7),
+            Priority = "Medium",
+            Status = "Planned"
+        };
+        newPlan.Id = Guid.Empty; // Ensure it's new
+        showCreateModal = true;
+    }
+
+    private void EditPlan(ERPWMS.Domain.Entities.ProductionPlan plan)
+    {
+        newPlan = new ERPWMS.Domain.Entities.ProductionPlan
+        {
+            Id = plan.Id,
+            PlanNo = plan.PlanNo,
+            ProductCode = plan.ProductCode,
+            Quantity = plan.Quantity,
+            CompletedQuantity = plan.CompletedQuantity,
+            StartDate = plan.StartDate,
+            EndDate = plan.EndDate,
+            Priority = plan.Priority,
+            Status = plan.Status
+        };
+        showCreateModal = true;
+    }
+
+    private void CloseCreateModal()
+    {
+        showCreateModal = false;
+    }
+
+    private void ShowProgressModal(ERPWMS.Domain.Entities.ProductionPlan plan)
+    {
+        selectedPlan = plan;
+        progressQuantity = plan.CompletedQuantity;
+        showProgressModal = true;
+    }
+
+    private void CloseProgressModal()
+    {
+        showProgressModal = false;
+        selectedPlan = null;
+    }
+
+    private async Task SaveProgress()
+    {
+        if (selectedPlan == null) return;
+
+        if (progressQuantity > selectedPlan.Quantity)
+        {
+             await JSRuntime.InvokeVoidAsync("alert", "完成数量不能超过排产总量");
+             return;
+        }
+
+        selectedPlan.CompletedQuantity = progressQuantity;
+        
+        // Auto update status if 100%
+        if (selectedPlan.CompletedQuantity >= selectedPlan.Quantity && selectedPlan.Status != "Completed")
+        {
+             var confirmComplete = await JSRuntime.InvokeAsync<bool>("confirm", "进度已达 100%，是否将状态更新为【完成】？");
+             if (confirmComplete)
+             {
+                 selectedPlan.Status = "Completed";
+             }
+        }
+        else if (selectedPlan.CompletedQuantity > 0 && selectedPlan.Status == "Planned")
+        {
+             selectedPlan.Status = "InProgress";
+        }
+
+        await EnterpriseService.UpdatePlanAsync(selectedPlan);
+        showProgressModal = false;
+        await LoadData();
+    }
+
+    private async Task SavePlan()
+    {
+        if (newPlan.Id == Guid.Empty)
+        {
+             await EnterpriseService.AddPlanAsync(newPlan);
+        }
+        else
+        {
+             await EnterpriseService.UpdatePlanAsync(newPlan);
+        }
+        showCreateModal = false;
+        await LoadData();
+    }
+
+    private async Task UpdateStatus(ERPWMS.Domain.Entities.ProductionPlan plan, string status)
+    {
+        plan.Status = status;
+        await EnterpriseService.UpdatePlanAsync(plan);
+        await LoadData();
+    }
+
+    private async Task DeletePlan(Guid id)
+    {
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "确定要删除该排产计划吗？");
+        if (confirmed)
+        {
+            await EnterpriseService.DeletePlanAsync(id);
+            await LoadData();
+        }
+    }
+
+    private async Task ReleaseAndStart(ERPWMS.Domain.Entities.ProductionPlan plan)
+    {
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", $"确定要将计划 {plan.PlanNo} 下达 MES 并开始生产吗？");
+        if (confirmed)
+        {
+            // 1. Create MES Work Order
+            var newWo = new ERPWMS.Domain.Entities.WorkOrder
+            {
+                WorkOrderNo = $"WO-{DateTime.Now:yyyyMMddHHmmss}",
+                PlanNo = plan.PlanNo,
+                ProductName = inventories.FirstOrDefault(i => i.ProductCode == plan.ProductCode)?.ProductName ?? plan.ProductCode,
+                PlanQty = plan.Quantity,
+                CompletedQty = 0,
+                LineCode = "Line-A", // Default
+                Status = "Running", // Directly set to Running
+                YieldRate = 100,
+                StartTime = DateTime.Now,
+                CreatedTime = DateTime.Now
+            };
+
+            await WorkOrderService.CreateAsync(newWo);
+
+            // 2. Update APS Plan
+            plan.WorkOrderNo = newWo.WorkOrderNo;
+            plan.Status = "InProgress"; // Also set APS plan to InProgress
+            await EnterpriseService.UpdatePlanAsync(plan);
+
+            await LoadData();
+            await JSRuntime.InvokeVoidAsync("alert", "工单已下达并自动开始生产！");
+        }
+    }
+}

@@ -1,0 +1,327 @@
+@page "/srm/suppliers"
+@inject EnterpriseService EnterpriseService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<h3 class="mb-3">SRM 供应商管理</h3>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-primary">供应商列表</h6>
+        <div>
+            <button class="btn btn-info btn-sm me-2 text-white" @onclick="ShowPerformanceModal">
+                <i class="bi bi-bar-chart-fill"></i> 供货绩效分析
+            </button>
+            <button class="btn btn-primary btn-sm" @onclick="ShowAddModal">
+                <i class="bi bi-plus-lg"></i> 新增供应商
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        @if (suppliers == null)
+        {
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">加载中...</span>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>供应商名称</th>
+                            <th>分类</th>
+                            <th>联系人</th>
+                            <th>电话</th>
+                            <th>评级</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in suppliers)
+                        {
+                            <tr>
+                                <td>@item.SupplierName</td>
+                                <td>@item.Category</td>
+                                <td>@item.ContactPerson</td>
+                                <td>@item.Phone</td>
+                                <td>
+                                    @if (item.Rating == "A")
+                                    {
+                                        <span class="badge bg-success">A 级</span>
+                                    }
+                                    else if (item.Rating == "B")
+                                    {
+                                        <span class="badge bg-primary">B 级</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">@item.Rating 级</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.Status == "Active")
+                                    {
+                                        <span class="badge bg-success">正常</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">停用</span>
+                                    }
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-info text-white me-1" @onclick='() => NavigateToDetails(item.Id)'>详情</button>
+                                    <button class="btn btn-sm btn-primary me-1" @onclick='() => EditSupplier(item)'>编辑</button>
+                                    <button class="btn btn-sm btn-outline-danger" @onclick='() => DeleteSupplier(item.Id)'>移除</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Add Modal -->
+@if (showModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white border-primary">
+                <div class="modal-header border-primary">
+                    <h5 class="modal-title">新增供应商</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">供应商名称</label>
+                            <input type="text" class="form-control bg-dark text-white border-primary" @bind="newSupplier.SupplierName" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">评级</label>
+                            <select class="form-select bg-dark text-white border-primary" @bind="newSupplier.Rating">
+                                <option value="A">A 级</option>
+                                <option value="B">B 级</option>
+                                <option value="C">C 级</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">分类</label>
+                            <select class="form-select bg-dark text-white border-primary" @bind="newSupplier.Category">
+                                <option value="RawMaterial">原材料</option>
+                                <option value="Equipment">设备</option>
+                                <option value="Service">服务</option>
+                            </select>
+                        </div>
+                         <div class="col-md-6 mb-3">
+                            <label class="form-label">状态</label>
+                            <select class="form-select bg-dark text-white border-primary" @bind="newSupplier.Status">
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">税号</label>
+                        <input type="text" class="form-control bg-dark text-white border-primary" @bind="newSupplier.TaxId" />
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">联系人</label>
+                            <input type="text" class="form-control bg-dark text-white border-primary" @bind="newSupplier.ContactPerson" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">电话</label>
+                            <input type="text" class="form-control bg-dark text-white border-primary" @bind="newSupplier.Phone" />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">邮箱</label>
+                        <input type="email" class="form-control bg-dark text-white border-primary" @bind="newSupplier.Email" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">地址</label>
+                        <input type="text" class="form-control bg-dark text-white border-primary" @bind="newSupplier.Address" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">财务信息</label>
+                        <div class="input-group mb-2">
+                             <span class="input-group-text bg-secondary text-white border-primary">银行账号</span>
+                             <input type="text" class="form-control bg-dark text-white border-primary" @bind="newSupplier.BankAccount" />
+                        </div>
+                         <div class="input-group">
+                             <span class="input-group-text bg-secondary text-white border-primary">付款条款</span>
+                             <input type="text" class="form-control bg-dark text-white border-primary" @bind="newSupplier.PaymentTerms" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-primary">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseModal">取消</button>
+                    <button type="button" class="btn btn-primary" @onclick="SaveSupplier">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Performance Modal -->
+@if (showPerformanceModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark text-white border-info">
+                <div class="modal-header border-info">
+                    <h5 class="modal-title">供货绩效分析</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="ClosePerformanceModal"></button>
+                </div>
+                <div class="modal-body">
+                     <div id="supplierAggregateChart" style="width: 100%; height: 400px;"></div>
+                </div>
+                <div class="modal-footer border-info">
+                    <button type="button" class="btn btn-secondary" @onclick="ClosePerformanceModal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<ERPWMS.Domain.Entities.Supplier>? suppliers;
+    private bool showModal = false;
+    private bool showPerformanceModal = false;
+    private ERPWMS.Domain.Entities.Supplier newSupplier = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        suppliers = await EnterpriseService.GetSuppliersAsync();
+    }
+
+    private void NavigateToDetails(Guid id)
+    {
+        NavigationManager.NavigateTo($"/srm/suppliers/{id}");
+    }
+
+    private void ShowAddModal()
+    {
+        newSupplier = new ERPWMS.Domain.Entities.Supplier();
+        newSupplier.Id = Guid.Empty;
+        showModal = true;
+    }
+
+    private async Task ShowPerformanceModal()
+    {
+        showPerformanceModal = true;
+        await Task.Delay(100); // Wait for modal to render
+        await InitAggregateChart();
+    }
+
+    private void ClosePerformanceModal()
+    {
+        showPerformanceModal = false;
+    }
+
+    private async Task InitAggregateChart()
+    {
+        if (suppliers == null) return;
+
+        var chartOption = new
+        {
+            title = new { text = "供应商评级分布", left = "center", textStyle = new { color = "#fff" } },
+            tooltip = new { trigger = "item" },
+            legend = new { orient = "vertical", left = "left", textStyle = new { color = "#fff" } },
+            series = new[]
+            {
+                new
+                {
+                    name = "评级",
+                    type = "pie",
+                    radius = "50%",
+                    data = suppliers.GroupBy(s => s.Rating)
+                        .Select(g => new { value = g.Count(), name = $"{g.Key} 级" })
+                        .ToArray(),
+                    emphasis = new
+                    {
+                        itemStyle = new
+                        {
+                            shadowBlur = 10,
+                            shadowOffsetX = 0,
+                            shadowColor = "rgba(0, 0, 0, 0.5)"
+                        }
+                    }
+                }
+            }
+        };
+
+        await JSRuntime.InvokeVoidAsync("echartsInterop.initChart", "supplierAggregateChart", chartOption);
+    }
+
+
+    private void EditSupplier(ERPWMS.Domain.Entities.Supplier supplier)
+    {
+        newSupplier = new ERPWMS.Domain.Entities.Supplier
+        {
+            Id = supplier.Id,
+            SupplierName = supplier.SupplierName,
+            Category = supplier.Category,
+            ContactPerson = supplier.ContactPerson,
+            Phone = supplier.Phone,
+            Email = supplier.Email,
+            Address = supplier.Address,
+            TaxId = supplier.TaxId,
+            BankAccount = supplier.BankAccount,
+            PaymentTerms = supplier.PaymentTerms,
+            Rating = supplier.Rating,
+            Status = supplier.Status
+        };
+        showModal = true;
+    }
+
+    private void CloseModal()
+    {
+        showModal = false;
+    }
+
+    private async Task SaveSupplier()
+    {
+        try 
+        {
+            if (newSupplier.Id == Guid.Empty)
+            {
+                await EnterpriseService.AddSupplierAsync(newSupplier);
+            }
+            else
+            {
+                await EnterpriseService.UpdateSupplierAsync(newSupplier);
+            }
+            showModal = false;
+            // Add a small delay to allow server processing
+            await Task.Delay(100);
+            await LoadData();
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"保存失败: {ex.Message}");
+        }
+    }
+
+    private async Task DeleteSupplier(Guid id)
+    {
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "确定要移除该供应商吗？");
+        if (confirmed)
+        {
+            await EnterpriseService.DeleteSupplierAsync(id);
+            await LoadData();
+        }
+    }
+}

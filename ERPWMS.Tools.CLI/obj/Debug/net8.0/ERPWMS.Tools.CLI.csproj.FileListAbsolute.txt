@@ -1,0 +1,14 @@
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Tools.CLI\bin\Debug\net8.0\ERPWMS.Tools.CLI.exe
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Tools.CLI\bin\Debug\net8.0\ERPWMS.Tools.CLI.deps.json
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Tools.CLI\bin\Debug\net8.0\ERPWMS.Tools.CLI.runtimeconfig.json
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Tools.CLI\bin\Debug\net8.0\ERPWMS.Tools.CLI.dll
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Tools.CLI\bin\Debug\net8.0\ERPWMS.Tools.CLI.pdb
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Tools.CLI\obj\Debug\net8.0\ERPWMS.Tools.CLI.GeneratedMSBuildEditorConfig.editorconfig
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Tools.CLI\obj\Debug\net8.0\ERPWMS.Tools.CLI.AssemblyInfoInputs.cache
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Tools.CLI\obj\Debug\net8.0\ERPWMS.Tools.CLI.AssemblyInfo.cs
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Tools.CLI\obj\Debug\net8.0\ERPWMS.Tools.CLI.csproj.CoreCompileInputs.cache
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Tools.CLI\obj\Debug\net8.0\ERPWMS.Tools.CLI.dll
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Tools.CLI\obj\Debug\net8.0\refint\ERPWMS.Tools.CLI.dll
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Tools.CLI\obj\Debug\net8.0\ERPWMS.Tools.CLI.pdb
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Tools.CLI\obj\Debug\net8.0\ERPWMS.Tools.CLI.genruntimeconfig.cache
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.Tools.CLI\obj\Debug\net8.0\ref\ERPWMS.Tools.CLI.dll

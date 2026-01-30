@@ -1,0 +1,169 @@
+@page "/mes/workorders"
+@using ERPWMS.Domain.Entities
+@using ERPWMS.Infrastructure.Persistence
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext DbContext
+@rendermode InteractiveServer
+
+<PageTitle>生产工单</PageTitle>
+
+<div class="container-fluid">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 text-warning fw-bold"><i class="bi bi-card-checklist me-2"></i>生产工单管理 (MES)</h5>
+            <button class="btn btn-warning text-white" @onclick="CreateWorkOrder"><i class="bi bi-plus-lg"></i> 下达工单</button>
+        </div>
+        <div class="card-body">
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" placeholder="搜索工单号/产品编码..." @bind="searchKeyword" @bind:event="oninput" @onkeyup="HandleSearch">
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" @bind="selectedStatus">
+                        <option value="">所有状态</option>
+                        <option value="Running">生产中</option>
+                        <option value="Pending">已挂起</option>
+                        <option value="Completed">已完成</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-secondary w-100" @onclick="LoadData">查询</button>
+                </div>
+            </div>
+
+            @if (workOrders == null)
+            {
+                 <div class="text-center py-5">
+                    <div class="spinner-border text-warning" role="status"></div>
+                </div>
+            }
+            else
+            {
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>工单号</th>
+                            <th>产品名称</th>
+                            <th>计划数量</th>
+                            <th>已完工</th>
+                            <th>良品率</th>
+                            <th>产线</th>
+                            <th>状态</th>
+                            <th>进度</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in workOrders)
+                        {
+                            <tr>
+                                <td>@item.WorkOrderNo</td>
+                                <td>@item.ProductName</td>
+                                <td>@item.PlanQty</td>
+                                <td>@item.CompletedQty</td>
+                                <td class="@(item.YieldRate >= 98 ? "text-success" : "text-danger")">@item.YieldRate%</td>
+                                <td>@item.LineCode</td>
+                                <td>
+                                    @if(item.Status == "Running") { <span class="badge bg-primary">生产中</span> }
+                                    else if(item.Status == "Completed") { <span class="badge bg-success">已完成</span> }
+                                    else { <span class="badge bg-secondary">@item.Status</span> }
+                                </td>
+                                <td style="width: 150px">
+                                    @{
+                                        var progress = item.PlanQty > 0 ? (int)((double)item.CompletedQty / item.PlanQty * 100) : 0;
+                                    }
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: @progress%"></div>
+                                    </div>
+                                    <small class="text-muted">@progress%</small>
+                                </td>
+                                <td>
+                                    @if(item.Status != "Completed")
+                                    {
+                                        <button class="btn btn-sm btn-success" @onclick="() => ReportProgress(item)">报工</button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<WorkOrder>? workOrders;
+    private string searchKeyword = "";
+    private string selectedStatus = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task HandleSearch(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter") await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        var query = DbContext.WorkOrders.AsNoTracking().AsQueryable();
+
+        if (!string.IsNullOrEmpty(selectedStatus))
+        {
+            query = query.Where(w => w.Status == selectedStatus);
+        }
+
+        if (!string.IsNullOrEmpty(searchKeyword))
+        {
+            query = query.Where(w => w.WorkOrderNo.Contains(searchKeyword) || w.ProductName.Contains(searchKeyword));
+        }
+
+        workOrders = await query.OrderByDescending(w => w.CreatedTime).ToListAsync();
+    }
+
+    private async Task CreateWorkOrder()
+    {
+        // 模拟创建逻辑
+        var newOrder = new WorkOrder
+        {
+            WorkOrderNo = $"WO-{DateTime.Now:yyyyMMdd}-{new Random().Next(100, 999)}",
+            ProductName = "新下达产品 X-Series",
+            PlanQty = 1000,
+            CompletedQty = 0,
+            LineCode = "Line-A",
+            Status = "Pending",
+            YieldRate = 100,
+            StartTime = DateTime.Now,
+            CreatedBy = "Admin",
+            CreatedTime = DateTime.Now
+        };
+        DbContext.WorkOrders.Add(newOrder);
+        await DbContext.SaveChangesAsync();
+        await LoadData();
+    }
+
+    private async Task ReportProgress(WorkOrder wo)
+    {
+        // 模拟报工: 每次增加 10%
+        var dbWo = await DbContext.WorkOrders.FindAsync(wo.Id);
+        if (dbWo != null)
+        {
+            dbWo.CompletedQty += (int)(dbWo.PlanQty * 0.1);
+            if (dbWo.CompletedQty >= dbWo.PlanQty)
+            {
+                dbWo.CompletedQty = dbWo.PlanQty;
+                dbWo.Status = "Completed";
+                dbWo.EndTime = DateTime.Now;
+            }
+            else
+            {
+                dbWo.Status = "Running";
+            }
+            await DbContext.SaveChangesAsync();
+            await LoadData();
+        }
+    }
+}

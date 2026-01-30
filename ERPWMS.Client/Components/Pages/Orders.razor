@@ -1,0 +1,237 @@
+@page "/orders"
+@inject OrderService OrderService
+@inject IJSRuntime JSRuntime
+
+<h3 class="mb-3">ERP 订单管理</h3>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn @(currentType == "Sales" ? "btn-primary" : "btn-outline-primary")" @onclick='() => LoadOrders("Sales")'>销售订单</button>
+            <button type="button" class="btn @(currentType == "Purchase" ? "btn-primary" : "btn-outline-primary")" @onclick='() => LoadOrders("Purchase")'>采购订单</button>
+        </div>
+        <button class="btn btn-success" @onclick="ShowCreateModal">
+            <i class="bi bi-plus-lg"></i> 新建订单
+        </button>
+    </div>
+    <div class="card-body">
+        @if (orders == null)
+        {
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">加载中...</span>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>订单号</th>
+                            <th>@(currentType == "Sales" ? "客户" : "供应商")</th>
+                            <th>日期</th>
+                            <th>总金额</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in orders)
+                        {
+                            <tr>
+                                <td class="fw-bold">@order.OrderNo</td>
+                                <td>@order.CustomerOrSupplier</td>
+                                <td>@order.OrderDate.ToString("yyyy-MM-dd")</td>
+                                <td class="text-primary fw-bold">@order.TotalAmount.ToString("C")</td>
+                                <td>
+                                    @if (order.Status == "Completed")
+                                    {
+                                        <span class="badge bg-success">已完成</span>
+                                    }
+                                    else if (order.Status == "Pending")
+                                    {
+                                        <span class="badge bg-warning text-dark">待处理</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@order.Status</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (order.Status != "Completed")
+                                    {
+                                        <button class="btn btn-sm btn-outline-success me-1" @onclick="() => ProcessOrder(order)">
+                                            <i class="bi bi-check-lg"></i> 处理
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => EditOrder(order)">
+                                            <i class="bi bi-pencil"></i> 编辑
+                                        </button>
+                                    }
+                                    <button class="btn btn-sm btn-outline-info" @onclick="() => ShowDetails(order)">
+                                        <i class="bi bi-eye"></i> 详情
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Create Order Modal -->
+@if (showCreateModal)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">@(newOrder.Id == Guid.Empty ? "新建" : "编辑") @(currentType == "Sales" ? "销售" : "采购") 订单</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseCreateModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">订单号</label>
+                        <input type="text" class="form-control bg-secondary text-white border-0" @bind="newOrder.OrderNo" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">@(currentType == "Sales" ? "客户名称" : "供应商名称")</label>
+                        <input type="text" class="form-control bg-dark text-white border-secondary" @bind="newOrder.CustomerOrSupplier" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">订单金额</label>
+                        <input type="number" class="form-control bg-dark text-white border-secondary" @bind="newOrder.TotalAmount" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">订单日期</label>
+                        <input type="date" class="form-control bg-dark text-white border-secondary" @bind="newOrder.OrderDate" />
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseCreateModal">取消</button>
+                    <button type="button" class="btn btn-primary" @onclick="SaveOrder">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Details Modal -->
+@if (showDetailsModal && selectedOrder != null)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">订单详情</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseDetailsModal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>订单号:</strong> @selectedOrder.OrderNo</p>
+                    <p><strong>类型:</strong> @(selectedOrder.Type == "Sales" ? "销售订单" : "采购订单")</p>
+                    <p><strong>@(selectedOrder.Type == "Sales" ? "客户" : "供应商"):</strong> @selectedOrder.CustomerOrSupplier</p>
+                    <p><strong>金额:</strong> @selectedOrder.TotalAmount.ToString("C")</p>
+                    <p><strong>状态:</strong> @selectedOrder.Status</p>
+                    <p><strong>创建时间:</strong> @selectedOrder.CreatedTime</p>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-primary" @onclick="CloseDetailsModal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<ERPWMS.Domain.Entities.Order>? orders;
+    private string currentType = "Sales";
+    private bool showCreateModal = false;
+    private bool showDetailsModal = false;
+    private ERPWMS.Domain.Entities.Order newOrder = new();
+    private ERPWMS.Domain.Entities.Order? selectedOrder;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadOrders("Sales");
+    }
+
+    private async Task LoadOrders(string type)
+    {
+        currentType = type;
+        orders = await OrderService.GetAllAsync(type);
+    }
+
+    private async Task ProcessOrder(ERPWMS.Domain.Entities.Order order)
+    {
+        if (await OrderService.ProcessOrderAsync(order.Id))
+        {
+            await LoadOrders(currentType);
+        }
+    }
+
+    private void ShowCreateModal()
+    {
+        newOrder = new ERPWMS.Domain.Entities.Order
+        {
+            OrderNo = $"ORD-{DateTime.Now:yyyyMMddHHmmss}",
+            OrderDate = DateTime.Now,
+            Type = currentType,
+            Status = "Pending"
+        };
+        newOrder.Id = Guid.Empty; // Ensure it's new
+        showCreateModal = true;
+    }
+
+    private void EditOrder(ERPWMS.Domain.Entities.Order order)
+    {
+        newOrder = new ERPWMS.Domain.Entities.Order
+        {
+            Id = order.Id,
+            OrderNo = order.OrderNo,
+            OrderDate = order.OrderDate,
+            Type = order.Type,
+            CustomerOrSupplier = order.CustomerOrSupplier,
+            TotalAmount = order.TotalAmount,
+            Status = order.Status,
+            CreatedTime = order.CreatedTime
+        };
+        showCreateModal = true;
+    }
+
+    private void CloseCreateModal()
+    {
+        showCreateModal = false;
+    }
+
+    private async Task SaveOrder()
+    {
+        if (string.IsNullOrWhiteSpace(newOrder.CustomerOrSupplier))
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "请输入客户/供应商名称");
+            return;
+        }
+
+        if (newOrder.Id == Guid.Empty)
+        {
+            await OrderService.CreateAsync(newOrder);
+        }
+        else
+        {
+            await OrderService.UpdateAsync(newOrder);
+        }
+        showCreateModal = false;
+        await LoadOrders(currentType);
+    }
+
+    private void ShowDetails(ERPWMS.Domain.Entities.Order order)
+    {
+        selectedOrder = order;
+        showDetailsModal = true;
+    }
+
+    private void CloseDetailsModal()
+    {
+        showDetailsModal = false;
+    }
+}

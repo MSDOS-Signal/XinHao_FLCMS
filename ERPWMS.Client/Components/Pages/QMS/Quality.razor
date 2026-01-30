@@ -1,0 +1,353 @@
+@page "/qms/quality"
+@inject EnterpriseService EnterpriseService
+@inject IJSRuntime JSRuntime
+
+<h3 class="mb-3 text-white">QMS 质量管理</h3>
+
+<div class="card bg-dark text-white border-secondary shadow mb-4">
+    <div class="card-header border-secondary py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-white">质检记录列表</h6>
+        <button class="btn btn-primary btn-sm" @onclick="ShowCreateModal">
+            <i class="bi bi-plus-lg"></i> 新增质检单
+        </button>
+    </div>
+    <div class="card-body">
+        @if (checks == null)
+        {
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-light" role="status">
+                    <span class="visually-hidden">加载中...</span>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th class="text-white">质检单号</th>
+                            <th class="text-white">类型</th>
+                            <th class="text-white">目标对象</th>
+                            <th class="text-white">批次号</th>
+                            <th class="text-white">抽样/不良</th>
+                            <th class="text-white">质检结果</th>
+                            <th class="text-white">质检员</th>
+                            <th class="text-white">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in checks)
+                        {
+                            <tr>
+                                <td class="font-monospace text-warning">@item.CheckNo</td>
+                                <td><span class="badge bg-secondary text-white border border-light">@item.TargetType</span></td>
+                                <td class="fw-bold text-white">@item.TargetCode</td>
+                                <td class="text-white-50">@item.BatchNo</td>
+                                <td>
+                                    <span class="text-white">@item.SampleQuantity</span> / 
+                                    <span class="@(item.DefectQuantity > 0 ? "text-danger fw-bold" : "text-success")">@item.DefectQuantity</span>
+                                </td>
+                                <td>
+                                    @if (item.Result == "Pass")
+                                    {
+                                        <span class="badge bg-success rounded-pill"><i class="bi bi-check-circle-fill"></i> 合格</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger rounded-pill"><i class="bi bi-x-circle-fill"></i> 不合格</span>
+                                    }
+                                </td>
+                                <td class="text-white">@item.Inspector</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => EditCheck(item)" title="编辑记录">
+                                        <i class="bi bi-pencil"></i> 编辑
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-info me-1" @onclick="() => ShowReport(item)" title="查看报告">
+                                        <i class="bi bi-file-earmark-text"></i> 报告
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteCheck(item.Id)" title="删除记录">
+                                        <i class="bi bi-trash"></i> 删除
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Report Modal -->
+@if (showReportModal && selectedCheck != null)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark text-white border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">质检报告预览</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseReportModal"></button>
+                </div>
+                <div class="modal-body" id="printArea">
+                    <!-- Report content container, intentionally white for print preview logic, but styled to look like a paper on dark modal -->
+                    <div class="p-4 bg-white text-dark border shadow-sm mx-auto" style="min-height: 500px; max-width: 800px;">
+                        <div class="text-center mb-4 border-bottom pb-3">
+                            <h2 class="fw-bold">QMS 质量检验报告</h2>
+                            <p class="text-muted mb-0">Quality Inspection Report</p>
+                            <div class="mt-2">单号/No: <span class="font-monospace fw-bold">@selectedCheck.CheckNo</span></div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <p class="mb-1"><strong>检验类型:</strong> @selectedCheck.TargetType</p>
+                                <p class="mb-1"><strong>目标对象:</strong> @selectedCheck.TargetCode</p>
+                            </div>
+                            <div class="col-6 text-end">
+                                <p class="mb-1"><strong>检验时间:</strong> @selectedCheck.CheckTime.ToString("yyyy-MM-dd HH:mm")</p>
+                                <p class="mb-1"><strong>批次号:</strong> @selectedCheck.BatchNo</p>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive mb-4">
+                            <table class="table table-bordered border-dark text-center">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>抽样数量 (Sample)</th>
+                                        <th>不良数量 (Defect)</th>
+                                        <th>最终判定 (Result)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="fs-4">@selectedCheck.SampleQuantity</td>
+                                        <td class="fs-4 text-danger">@selectedCheck.DefectQuantity</td>
+                                        <td>
+                                            @if (selectedCheck.Result == "Pass")
+                                            {
+                                                <span class="badge bg-success fs-5">合格 (PASS)</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger fs-5">不合格 (FAIL)</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(selectedCheck.DefectReason))
+                        {
+                            <div class="mb-4">
+                                <h6 class="fw-bold border-bottom pb-1">不良原因分析 (Defect Analysis)</h6>
+                                <p class="p-2 bg-light border rounded">@selectedCheck.DefectReason</p>
+                            </div>
+                        }
+
+                        <div class="mb-4">
+                            <h6 class="fw-bold border-bottom pb-1">备注 (Remarks)</h6>
+                            <p class="p-2 bg-light border rounded" style="min-height: 60px;">@selectedCheck.Remarks</p>
+                        </div>
+
+                        <div class="row mt-5 pt-4">
+                            <div class="col-6">
+                                <p><strong>质检员 (Inspector):</strong> @selectedCheck.Inspector</p>
+                            </div>
+                            <div class="col-6 text-end">
+                                <p><strong>审核 (Approved By):</strong> _________________</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseReportModal">关闭</button>
+                    <button type="button" class="btn btn-primary" @onclick="PrintReport">
+                        <i class="bi bi-printer"></i> 打印报告
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Create Modal -->
+@if (showCreateModal)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">@(newCheck.Id == Guid.Empty ? "新增质检单" : "编辑质检单")</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseCreateModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">质检单号</label>
+                        <input type="text" class="form-control bg-secondary text-white border-0" @bind="newCheck.CheckNo" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">质检类型</label>
+                        <select class="form-select bg-dark text-white border-secondary" @bind="newCheck.TargetType">
+                            <option value="Inbound">来料检验</option>
+                            <option value="Process">制程检验</option>
+                            <option value="Outbound">出货检验</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-warning">关联供应商 (SRM)</label>
+                        <select class="form-select bg-dark text-white border-warning" @bind="newCheck.SupplierId">
+                            <option value="">-- 请选择供应商 --</option>
+                            @foreach (var sup in suppliers)
+                            {
+                                <option value="@sup.Id">@sup.SupplierName</option>
+                            }
+                        </select>
+                        <div class="form-text text-white-50">关联供应商后，质检结果将影响其绩效评分（通常用于来料检验）。</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">目标对象 (物料/产品/工单号)</label>
+                        <input type="text" class="form-control bg-dark text-white border-secondary" @bind="newCheck.TargetCode" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">批次号</label>
+                        <input type="text" class="form-control bg-dark text-white border-secondary" @bind="newCheck.BatchNo" />
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">抽样数量</label>
+                            <input type="number" class="form-control bg-dark text-white border-secondary" @bind="newCheck.SampleQuantity" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">不良数量</label>
+                            <input type="number" class="form-control bg-dark text-white border-secondary" @bind="newCheck.DefectQuantity" />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">质检结果</label>
+                        <select class="form-select bg-dark text-white border-secondary" @bind="newCheck.Result">
+                            <option value="Pass">合格</option>
+                            <option value="Fail">不合格</option>
+                        </select>
+                    </div>
+                     <div class="mb-3">
+                        <label class="form-label">质检员</label>
+                        <input type="text" class="form-control bg-dark text-white border-secondary" @bind="newCheck.Inspector" />
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseCreateModal">取消</button>
+                    <button type="button" class="btn btn-primary" @onclick="SaveCheck">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<ERPWMS.Domain.Entities.QualityCheck>? checks;
+    private List<ERPWMS.Domain.Entities.Supplier> suppliers = new();
+    private ERPWMS.Domain.Entities.QualityCheck newCheck = new();
+    private ERPWMS.Domain.Entities.QualityCheck? selectedCheck;
+    private bool showCreateModal = false;
+    private bool showReportModal = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        var t1 = EnterpriseService.GetQualityChecksAsync();
+        var t2 = EnterpriseService.GetSuppliersAsync();
+        await Task.WhenAll(t1, t2);
+        checks = t1.Result;
+        suppliers = t2.Result;
+    }
+
+    private void ShowCreateModal()
+    {
+        newCheck = new ERPWMS.Domain.Entities.QualityCheck
+        {
+            CheckNo = $"QC-{DateTime.Now:yyyyMMdd}-{new Random().Next(100, 999)}",
+            CheckTime = DateTime.Now,
+            SampleQuantity = 50,
+            Inspector = "Inspector A"
+        };
+        // Reset Id for new
+        newCheck.Id = Guid.Empty;
+        showCreateModal = true;
+    }
+
+    private void EditCheck(ERPWMS.Domain.Entities.QualityCheck check)
+    {
+        newCheck = new ERPWMS.Domain.Entities.QualityCheck
+        {
+            Id = check.Id,
+            CheckNo = check.CheckNo,
+            TargetType = check.TargetType,
+            TargetCode = check.TargetCode,
+            BatchNo = check.BatchNo,
+            CheckType = check.CheckType,
+            SampleQuantity = check.SampleQuantity,
+            DefectQuantity = check.DefectQuantity,
+            DefectReason = check.DefectReason,
+            Result = check.Result,
+            Inspector = check.Inspector,
+            CheckTime = check.CheckTime,
+            Remarks = check.Remarks,
+            SupplierId = check.SupplierId
+        };
+        showCreateModal = true;
+    }
+
+    private void CloseCreateModal()
+    {
+        showCreateModal = false;
+    }
+
+    private async Task SaveCheck()
+    {
+        if (newCheck.Id == Guid.Empty)
+        {
+            await EnterpriseService.AddQualityCheckAsync(newCheck);
+        }
+        else
+        {
+            await EnterpriseService.UpdateQualityCheckAsync(newCheck);
+        }
+        showCreateModal = false;
+        await LoadData();
+    }
+
+    private async Task DeleteCheck(Guid id)
+    {
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "确定要删除该质检记录吗？");
+        if (confirmed)
+        {
+            await EnterpriseService.DeleteQualityCheckAsync(id);
+            await LoadData();
+        }
+    }
+
+    private void ShowReport(ERPWMS.Domain.Entities.QualityCheck check)
+    {
+        selectedCheck = check;
+        showReportModal = true;
+    }
+
+    private void CloseReportModal()
+    {
+        showReportModal = false;
+    }
+
+    private async Task PrintReport()
+    {
+        // Simple print implementation
+        await JSRuntime.InvokeVoidAsync("print");
+    }
+}
+

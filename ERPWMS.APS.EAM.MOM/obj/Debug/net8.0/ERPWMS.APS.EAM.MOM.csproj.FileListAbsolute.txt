@@ -1,0 +1,17 @@
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.APS.EAM.MOM\bin\Debug\net8.0\ERPWMS.APS.EAM.MOM.deps.json
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.APS.EAM.MOM\bin\Debug\net8.0\ERPWMS.APS.EAM.MOM.dll
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.APS.EAM.MOM\bin\Debug\net8.0\ERPWMS.APS.EAM.MOM.pdb
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.APS.EAM.MOM\bin\Debug\net8.0\ERPWMS.Domain.dll
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.APS.EAM.MOM\bin\Debug\net8.0\ERPWMS.Shared.dll
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.APS.EAM.MOM\bin\Debug\net8.0\ERPWMS.Domain.pdb
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.APS.EAM.MOM\bin\Debug\net8.0\ERPWMS.Shared.pdb
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.APS.EAM.MOM\obj\Debug\net8.0\ERPWMS.APS.EAM.MOM.csproj.AssemblyReference.cache
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.APS.EAM.MOM\obj\Debug\net8.0\ERPWMS.APS.EAM.MOM.GeneratedMSBuildEditorConfig.editorconfig
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.APS.EAM.MOM\obj\Debug\net8.0\ERPWMS.APS.EAM.MOM.AssemblyInfoInputs.cache
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.APS.EAM.MOM\obj\Debug\net8.0\ERPWMS.APS.EAM.MOM.AssemblyInfo.cs
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.APS.EAM.MOM\obj\Debug\net8.0\ERPWMS.APS.EAM.MOM.csproj.CoreCompileInputs.cache
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.APS.EAM.MOM\obj\Debug\net8.0\ERPWMS.A.09001CDC.Up2Date
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.APS.EAM.MOM\obj\Debug\net8.0\ERPWMS.APS.EAM.MOM.dll
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.APS.EAM.MOM\obj\Debug\net8.0\refint\ERPWMS.APS.EAM.MOM.dll
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.APS.EAM.MOM\obj\Debug\net8.0\ERPWMS.APS.EAM.MOM.pdb
+E:\C#app\ERPWMS_MES_SuperProject\ERPWMS.APS.EAM.MOM\obj\Debug\net8.0\ref\ERPWMS.APS.EAM.MOM.dll

@@ -1,0 +1,180 @@
+@page "/erp/sales"
+@using ERPWMS.Domain.Entities
+@using ERPWMS.Infrastructure.Persistence
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext DbContext
+@rendermode InteractiveServer
+
+<PageTitle>销售管理</PageTitle>
+
+<div class="container-fluid">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 d-flex justify-content-between">
+            <h5 class="mb-0 text-success fw-bold"><i class="bi bi-currency-dollar me-2"></i>销售订单管理</h5>
+            <button class="btn btn-success" @onclick="CreateOrder"><i class="bi bi-plus-circle"></i> 新增订单</button>
+        </div>
+        <div class="card-body">
+             <div class="row mb-3">
+                <div class="col-md-3">
+                    <div class="card bg-light">
+                        <div class="card-body text-center">
+                            <h6 class="text-muted">今日销售额</h6>
+                            <h3>¥ @(todaySales.ToString("N0"))</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-light">
+                        <div class="card-body text-center">
+                            <h6 class="text-muted">待发货订单</h6>
+                            <h3 class="text-danger">@pendingCount</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            @if (orders == null)
+            {
+                <div class="text-center py-5">
+                    <div class="spinner-border text-success" role="status"></div>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>订单号</th>
+                                <th>客户</th>
+                                <th>下单时间</th>
+                                <th>总金额</th>
+                                <th>发货状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in orders)
+                            {
+                                <tr>
+                                    <td>@item.OrderNo</td>
+                                    <td>@item.CustomerOrSupplier</td>
+                                    <td>@item.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                    <td>¥ @item.TotalAmount.ToString("N2")</td>
+                                    <td>
+                                        @if(item.Status == "Completed") { <span class="badge bg-success">已发货</span> }
+                                        else if(item.Status == "Processing") { <span class="badge bg-warning text-dark">待发货</span> }
+                                        else { <span class="badge bg-secondary">@item.Status</span> }
+                                    </td>
+                                    <td>
+                                        @if(item.Status != "Completed")
+                                        {
+                                            <button class="btn btn-sm btn-primary" @onclick="() => ProcessOrder(item)">发货</button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-sm btn-outline-secondary" disabled>查看</button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Create Order Modal -->
+@if (showCreateModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">新增销售订单</h5>
+                    <button type="button" class="btn-close" @onclick="CloseCreateModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">客户名称</label>
+                        <input type="text" class="form-control" @bind="newOrder.CustomerOrSupplier" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">订单金额</label>
+                        <input type="number" class="form-control" @bind="newOrder.TotalAmount" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseCreateModal">取消</button>
+                    <button type="button" class="btn btn-success" @onclick="SaveNewOrder">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<Order>? orders;
+    private decimal todaySales;
+    private int pendingCount;
+    private bool showCreateModal = false;
+    private Order newOrder = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        // Load Sales Orders
+        orders = await DbContext.Orders
+            .Where(o => o.Type == "Sales")
+            .OrderByDescending(o => o.OrderDate)
+            .ToListAsync();
+
+        // Calc Stats
+        todaySales = orders.Where(o => o.OrderDate.Date == DateTime.Today).Sum(o => o.TotalAmount);
+        pendingCount = orders.Count(o => o.Status != "Completed");
+    }
+
+    private void CreateOrder()
+    {
+        newOrder = new Order
+        {
+            Type = "Sales",
+            OrderDate = DateTime.Now,
+            Status = "Processing",
+            CreatedBy = "Admin",
+            CreatedTime = DateTime.Now
+        };
+        showCreateModal = true;
+    }
+
+    private void CloseCreateModal()
+    {
+        showCreateModal = false;
+    }
+
+    private async Task SaveNewOrder()
+    {
+        newOrder.OrderNo = $"SO-{DateTime.Now:yyyyMMdd}-{new Random().Next(1000, 9999)}";
+        DbContext.Orders.Add(newOrder);
+        await DbContext.SaveChangesAsync();
+        showCreateModal = false;
+        await LoadData();
+    }
+
+    private async Task ProcessOrder(Order order)
+    {
+        var dbOrder = await DbContext.Orders.FindAsync(order.Id);
+        if (dbOrder != null)
+        {
+            dbOrder.Status = "Completed";
+            await DbContext.SaveChangesAsync();
+            await LoadData();
+        }
+    }
+}

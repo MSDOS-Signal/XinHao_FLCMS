@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "3xEI03t7ou4=",
+  "success": true,
+  "projectFilePath": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Shared\\ERPWMS.Shared.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Victor.Dong\\.nuget\\packages\\microsoft.netcore.app.runtime.linux-x64\\8.0.21\\microsoft.netcore.app.runtime.linux-x64.8.0.21.nupkg.sha512",
+    "C:\\Users\\Victor.Dong\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.linux-x64\\8.0.21\\microsoft.aspnetcore.app.runtime.linux-x64.8.0.21.nupkg.sha512"
+  ],
+  "logs": []
+}

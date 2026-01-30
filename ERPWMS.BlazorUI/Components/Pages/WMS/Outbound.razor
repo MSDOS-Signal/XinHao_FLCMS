@@ -1,0 +1,59 @@
+@page "/wms/outbound"
+
+<PageTitle>出库管理</PageTitle>
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>📤 出库作业管理</h4>
+        <button class="btn btn-primary"><i class="bi bi-plus-circle"></i> 创建出库单</button>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <ul class="nav nav-tabs mb-3">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">待分配</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">拣货中</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">待复核</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">已发货</a>
+                        </li>
+                    </ul>
+
+                     <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>出库单号</th>
+                                <th>来源订单</th>
+                                <th>客户/领料部门</th>
+                                <th>优先级</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>OUT-20240129-005</td>
+                                <td>SO-20240129-008</td>
+                                <td>特斯拉(上海)</td>
+                                <td><span class="badge bg-danger">高</span></td>
+                                <td><span class="badge bg-warning text-dark">拣货中 (WCS执行)</span></td>
+                                <td><button class="btn btn-sm btn-outline-primary">详情</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+}

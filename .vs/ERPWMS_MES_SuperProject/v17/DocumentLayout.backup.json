@@ -1,0 +1,41 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "E:\\C#app\\ERPWMS_MES_SuperProject\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{FA16D680-0E07-4AB3-B327-95ED1F6C9FB1}|ERPWMS.Client\\ERPWMS.Client.csproj|e:\\c#app\\erpwms_mes_superproject\\erpwms.client\\services\\enterpriseservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FA16D680-0E07-4AB3-B327-95ED1F6C9FB1}|ERPWMS.Client\\ERPWMS.Client.csproj|solutionrelative:erpwms.client\\services\\enterpriseservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "EnterpriseService.cs",
+              "DocumentMoniker": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Client\\Services\\EnterpriseService.cs",
+              "RelativeDocumentMoniker": "ERPWMS.Client\\Services\\EnterpriseService.cs",
+              "ToolTip": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Client\\Services\\EnterpriseService.cs",
+              "RelativeToolTip": "ERPWMS.Client\\Services\\EnterpriseService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAUAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-30T08:12:11.769Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

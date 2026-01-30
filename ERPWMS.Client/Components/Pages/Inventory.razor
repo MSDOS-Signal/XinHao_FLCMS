@@ -1,0 +1,295 @@
+@page "/inventory"
+@inject InventoryService InventoryService
+@inject EnterpriseService EnterpriseService
+@inject IJSRuntime JSRuntime
+@inject ERPWMS.Client.Services.IScannerService ScannerService
+
+<h3 class="mb-3 text-white">WMS 库存管理</h3>
+
+<div class="card bg-dark text-white border-secondary shadow mb-4">
+    <div class="card-header border-secondary py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-white">库存列表</h6>
+        <div class="dropdown no-arrow">
+            <button class="btn btn-sm btn-info shadow-sm me-2" @onclick="ScanAndAdd">
+                <i class="bi bi-qr-code-scan"></i> 扫码入库
+            </button>
+            <button class="btn btn-sm btn-primary shadow-sm me-2" @onclick="ShowCreateModal">
+                <i class="bi bi-plus-lg"></i> 新增库存
+            </button>
+            <button class="btn btn-sm btn-outline-light shadow-sm" @onclick="ExportReport">
+                <i class="bi bi-download"></i> 导出报表
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        @if (inventories == null)
+        {
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">加载中...</span>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>产品代码</th>
+                            <th>产品名称</th>
+                            <th>库位</th>
+                            <th>数量</th>
+                            <th>单位</th>
+                            <th>状态</th>
+                            <th>入库时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in inventories)
+                        {
+                            <tr>
+                                <td class="font-monospace">@item.ProductCode</td>
+                                <td class="fw-bold">@item.ProductName</td>
+                                <td><span class="badge bg-light text-dark border">@item.LocationCode</span></td>
+                                <td>
+                                    @if (item.Quantity < 10)
+                                    {
+                                        <span class="text-danger fw-bold">@item.Quantity <i class="bi bi-exclamation-circle"></i></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="fw-bold text-success">@item.Quantity</span>
+                                    }
+                                </td>
+                                <td>@item.Unit</td>
+                                <td>
+                                    <span class="badge bg-success">正常</span>
+                                </td>
+                                <td>@item.CreatedTime.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary me-1" @onclick="() => EditInventory(item)">
+                                        <i class="bi bi-pencil"></i> 编辑
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" @onclick="() => DeleteInventory(item.Id)">
+                                        <i class="bi bi-trash"></i> 删除
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@if (showModal)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">@modalTitle</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">产品代码</label>
+                        <select class="form-select bg-dark text-white border-secondary" @onchange="OnProductChanged" value="@editingInventory.ProductCode">
+                            <option value="">-- 请选择产品 --</option>
+                            @foreach (var p in products)
+                            {
+                                <option value="@p.Code">@p.Code - @p.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">产品名称</label>
+                        <input type="text" class="form-control bg-dark text-white border-secondary" @bind="editingInventory.ProductName" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">库位</label>
+                        <input type="text" class="form-control bg-dark text-white border-secondary" @bind="editingInventory.LocationCode" />
+                    </div>
+                     <div class="mb-3">
+                        <label class="form-label">仓库代码</label>
+                        <select class="form-select bg-dark text-white border-secondary" @bind="editingInventory.WarehouseCode">
+                            <option value="WH-MAIN">WH-MAIN (主仓库)</option>
+                            <option value="WH-RAW">WH-RAW (原料仓)</option>
+                            <option value="WH-FIN">WH-FIN (成品仓)</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">数量</label>
+                            <input type="number" class="form-control bg-dark text-white border-secondary" @bind="editingInventory.Quantity" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">单位</label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" @bind="editingInventory.Unit" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseModal">取消</button>
+                    <button type="button" class="btn btn-primary" @onclick="SaveInventory">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<ERPWMS.Domain.Entities.Inventory>? inventories;
+    private List<ERPWMS.Domain.Entities.Product> products = new();
+    private bool showModal = false;
+    private string modalTitle = "新增库存";
+    private ERPWMS.Domain.Entities.Inventory editingInventory = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var t1 = InventoryService.GetAllAsync();
+        var t2 = EnterpriseService.GetProductsAsync();
+        await Task.WhenAll(t1, t2);
+        inventories = t1.Result;
+        products = t2.Result;
+    }
+
+    private void OnProductChanged(ChangeEventArgs e)
+    {
+        var code = e.Value?.ToString();
+        if (string.IsNullOrEmpty(code)) return;
+        
+        editingInventory.ProductCode = code;
+        var product = products.FirstOrDefault(p => p.Code == code);
+        if (product != null)
+        {
+            editingInventory.ProductName = product.Name;
+            editingInventory.Unit = product.Unit;
+        }
+    }
+
+    private void ShowCreateModal()
+    {
+        editingInventory = new ERPWMS.Domain.Entities.Inventory 
+        { 
+            CreatedTime = DateTime.Now,
+            Unit = "PCS",
+            WarehouseCode = "WH-MAIN"
+        };
+        // Reset Id to empty to ensure it's treated as new
+        editingInventory.Id = Guid.Empty;
+        modalTitle = "新增库存";
+        showModal = true;
+    }
+
+    private void EditInventory(ERPWMS.Domain.Entities.Inventory item)
+    {
+        editingInventory = new ERPWMS.Domain.Entities.Inventory
+        {
+            Id = item.Id,
+            ProductCode = item.ProductCode,
+            ProductName = item.ProductName,
+            WarehouseCode = item.WarehouseCode,
+            LocationCode = item.LocationCode,
+            Quantity = item.Quantity,
+            Unit = item.Unit,
+            CreatedTime = item.CreatedTime,
+            BatchNo = item.BatchNo
+        };
+        modalTitle = "编辑库存";
+        showModal = true;
+    }
+
+    private void CloseModal()
+    {
+        showModal = false;
+    }
+
+    private async Task SaveInventory()
+    {
+        try 
+        {
+            if (editingInventory.Id == Guid.Empty)
+            {
+                await InventoryService.AddAsync(editingInventory);
+            }
+            else
+            {
+                await InventoryService.UpdateAsync(editingInventory);
+            }
+            showModal = false;
+            // Force a small delay to allow backend to process
+            await Task.Delay(100); 
+            inventories = await InventoryService.GetAllAsync();
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"保存失败: {ex.Message}");
+        }
+    }
+
+    private async Task DeleteInventory(Guid id)
+    {
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "确定要删除该库存记录吗？");
+        if (confirmed)
+        {
+            await InventoryService.DeleteAsync(id);
+            inventories = await InventoryService.GetAllAsync();
+        }
+    }
+
+    private async Task ExportReport()
+    {
+        if (inventories == null || !inventories.Any())
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "没有数据可导出");
+            return;
+        }
+
+        var csv = new System.Text.StringBuilder();
+        csv.AppendLine("\uFEFF产品代码,产品名称,库位,数量,单位,状态,入库时间");
+        foreach (var item in inventories)
+        {
+            csv.AppendLine($"{item.ProductCode},{item.ProductName},{item.LocationCode},{item.Quantity},{item.Unit},正常,{item.CreatedTime:yyyy-MM-dd HH:mm}");
+        }
+
+        var bytes = System.Text.Encoding.UTF8.GetBytes(csv.ToString());
+        var base64 = Convert.ToBase64String(bytes);
+        var fileName = $"InventoryReport_{DateTime.Now:yyyyMMddHHmm}.csv";
+
+        await JSRuntime.InvokeVoidAsync("eval", $"var link = document.createElement('a'); link.download = '{fileName}'; link.href = 'data:text/csv;charset=utf-8;base64,' + '{base64}'; document.body.appendChild(link); link.click(); document.body.removeChild(link);");
+    }
+
+    private async Task ScanAndAdd()
+    {
+        try
+        {
+            var code = await ScannerService.ScanAsync();
+            if (!string.IsNullOrEmpty(code))
+            {
+                // 扫码成功，打开新增弹窗并自动填充
+                ShowCreateModal();
+                editingInventory.ProductCode = code;
+                
+                // 尝试根据条码查找产品信息
+                var product = products.FirstOrDefault(p => p.Code == code);
+                if (product != null)
+                {
+                    editingInventory.ProductName = product.Name;
+                    editingInventory.Unit = product.Unit;
+                }
+                else
+                {
+                    // 如果找不到，可能扫的是新码，保持代码填充，提示用户
+                     await JSRuntime.InvokeVoidAsync("console.log", $"扫码结果: {code}，未找到对应产品资料");
+                }
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"扫码失败: {ex.Message}");
+        }
+    }
+}

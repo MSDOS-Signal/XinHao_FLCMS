@@ -1,0 +1,157 @@
+@page "/mes/scada"
+@using ERPWMS.Domain.Entities
+@using ERPWMS.Infrastructure.Persistence
+@using Microsoft.EntityFrameworkCore
+@using System.Text.Json
+@inject AppDbContext DbContext
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<PageTitle>设备监控</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col-12 d-flex justify-content-between">
+            <h5 class="fw-bold text-secondary"><i class="bi bi-activity me-2"></i>车间设备实时监控 (SCADA)</h5>
+            <button class="btn btn-sm btn-outline-primary" @onclick="LoadData"><i class="bi bi-arrow-clockwise"></i> 刷新数据</button>
+        </div>
+    </div>
+
+    @if (devices == null)
+    {
+         <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var device in devices)
+            {
+                var cardClass = device.Status switch 
+                {
+                    "Running" => "border-success",
+                    "Alarm" => "border-danger",
+                    "Charging" => "border-warning",
+                    "Stopped" => "border-secondary",
+                    _ => "border-secondary"
+                };
+                
+                var headerClass = device.Status switch 
+                {
+                    "Running" => "bg-success",
+                    "Alarm" => "bg-danger",
+                    "Charging" => "bg-warning text-dark",
+                    "Stopped" => "bg-secondary",
+                    _ => "bg-secondary"
+                };
+
+                <div class="col-md-4 mb-4">
+                    <div class="card @cardClass h-100 shadow-sm">
+                        <div class="card-header @headerClass text-white d-flex justify-content-between">
+                            <span>@device.DeviceName (@device.DeviceCode)</span>
+                            <span class="badge bg-light text-dark">@device.Status</span>
+                        </div>
+                        <div class="card-body">
+                            @{
+                                var data = ParseJson(device.RealTimeDataJson);
+                            }
+                            
+                            @if (device.Status == "Alarm")
+                            {
+                                <div class="alert alert-danger mt-2">
+                                    <i class="bi bi-exclamation-triangle-fill"></i> @device.LastAlarmMessage
+                                </div>
+                                <button class="btn btn-outline-danger w-100 mt-3" @onclick="() => ResetAlarm(device)">复位报警</button>
+                            }
+                            else
+                            {
+                                <h2 class="text-center my-3">
+                                    @if(data.ContainsKey("Speed")) { <span>@data["Speed"] rpm</span> }
+                                    else if(data.ContainsKey("Battery")) { <span>@data["Battery"]%</span> }
+                                    else { <span>--</span> }
+                                </h2>
+                                <p class="text-muted text-center">
+                                    @if(data.ContainsKey("Speed")) { <span>主轴转速</span> }
+                                    else if(data.ContainsKey("Battery")) { <span>电池电量</span> }
+                                </p>
+                                <hr/>
+                                <div class="row text-center">
+                                    @foreach(var kvp in data) 
+                                    {
+                                        if(kvp.Key != "Speed" && kvp.Key != "Battery")
+                                        {
+                                            <div class="col-6 mb-2">
+                                                <h5 class="mb-0">@kvp.Value</h5>
+                                                <small class="text-muted">@kvp.Key</small>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                                <div class="mt-3 text-center">
+                                    @if(device.Status == "Running")
+                                    {
+                                        <button class="btn btn-sm btn-outline-danger" @onclick='() => ToggleStatus(device, "Stopped")'>停止</button>
+                                    }
+                                    else if(device.Status == "Stopped")
+                                    {
+                                        <button class="btn btn-sm btn-outline-success" @onclick='() => ToggleStatus(device, "Running")'>启动</button>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private List<Device>? devices;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        devices = await DbContext.Devices.AsNoTracking().ToListAsync();
+    }
+
+    private Dictionary<string, object> ParseJson(string json)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<Dictionary<string, object>>(json) ?? new Dictionary<string, object>();
+        }
+        catch
+        {
+            return new Dictionary<string, object>();
+        }
+    }
+
+    private async Task ToggleStatus(Device device, string newStatus)
+    {
+        var dbDevice = await DbContext.Devices.FindAsync(device.Id);
+        if (dbDevice != null)
+        {
+            dbDevice.Status = newStatus;
+            await DbContext.SaveChangesAsync();
+            await LoadData();
+        }
+    }
+
+    private async Task ResetAlarm(Device device)
+    {
+        var dbDevice = await DbContext.Devices.FindAsync(device.Id);
+        if (dbDevice != null)
+        {
+            dbDevice.Status = "Stopped"; // Reset to stopped
+            dbDevice.LastAlarmMessage = "";
+            await DbContext.SaveChangesAsync();
+            await LoadData();
+        }
+    }
+}

@@ -1,0 +1,6 @@
+@ERPWMS.WebAPI_HostAddress = http://localhost:5248
+
+GET {{ERPWMS.WebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,55 @@
+@inherits LayoutComponentBase
+@implements IDisposable
+@using System.Timers
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4 text-end">
+            <span class="text-white fw-bold small" style="font-family: 'Consolas', monospace; font-size: 1.1em;">
+                <i class="bi bi-clock me-2"></i>@CurrentTime
+            </span>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code {
+    private string CurrentTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+    private Timer? _timer;
+
+    protected override void OnInitialized()
+    {
+        // 初始化时不启动，防止阻塞或异常
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _timer = new Timer(1000);
+            _timer.Elapsed += async (sender, e) =>
+            {
+                await InvokeAsync(() =>
+                {
+                    CurrentTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                    StateHasChanged();
+                });
+            };
+            _timer.AutoReset = true;
+            _timer.Enabled = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        _timer?.Stop();
+        _timer?.Dispose();
+    }
+}

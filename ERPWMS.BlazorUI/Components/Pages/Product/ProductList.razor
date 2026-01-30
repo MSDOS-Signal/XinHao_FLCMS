@@ -1,0 +1,144 @@
+@page "/products"
+@using ERPWMS.Domain.Entities
+@using ERPWMS.Infrastructure.Persistence
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext DbContext
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>产品管理</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <h1>📦 产品库管理 (WMS核心)</h1>
+        </div>
+        <div class="col-md-6 text-end">
+            <button class="btn btn-primary" @onclick="CreateProduct">
+                <i class="bi bi-plus-lg"></i> 新增产品
+            </button>
+        </div>
+    </div>
+
+    @if (errorMessage != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <strong>操作异常：</strong> @errorMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="() => errorMessage = null"></button>
+        </div>
+    }
+
+    @if (products == null)
+    {
+        <div class="alert alert-info">
+            <div class="spinner-border spinner-border-sm" role="status"></div>
+            正在加载数据...
+        </div>
+    }
+    else if (!products.Any())
+    {
+        <div class="alert alert-warning">暂无产品数据，请点击右上角新增。</div>
+    }
+    else
+    {
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <table class="table table-hover table-striped">
+                    <thead class="table-light">
+                        <tr>
+                            <th>编码</th>
+                            <th>名称</th>
+                            <th>价格</th>
+                            <th>描述</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in products)
+                        {
+                            <tr>
+                                <td><span class="badge bg-secondary">@item.Code</span></td>
+                                <td class="fw-bold">@item.Name</td>
+                                <td class="text-success">¥@item.Price.ToString("N2")</td>
+                                <td>@item.Description</td>
+                                <td>@item.CreatedTime.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteProduct(item)">
+                                        删除
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private List<Product>? products;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try 
+        {
+            errorMessage = null;
+            products = await DbContext.Products
+                .OrderByDescending(p => p.CreatedTime)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"数据加载失败: {ex.Message} (请检查数据库连接或是否已执行迁移)";
+            Console.WriteLine(ex.ToString());
+        }
+    }
+
+    private async Task CreateProduct()
+    {
+        try
+        {
+            // 模拟快速创建
+            var newProduct = new Product
+            {
+                Name = $"示例产品-{DateTime.Now.ToString("HHmmss")}",
+                Code = $"P{DateTime.Now.Ticks.ToString().Substring(10)}",
+                Price = new Random().Next(100, 1000),
+                Description = "系统自动生成测试数据",
+                CreatedBy = "Admin"
+            };
+
+            DbContext.Products.Add(newProduct);
+            await DbContext.SaveChangesAsync();
+            await LoadData();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"创建失败: {ex.Message}";
+        }
+    }
+
+    private async Task DeleteProduct(Product product)
+    {
+        try
+        {
+            DbContext.Products.Remove(product);
+            await DbContext.SaveChangesAsync();
+            await LoadData();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"删除失败: {ex.Message}";
+        }
+    }
+}

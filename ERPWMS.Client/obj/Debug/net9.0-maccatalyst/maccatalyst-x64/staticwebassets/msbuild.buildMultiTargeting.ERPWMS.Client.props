@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\ERPWMS.Client.props" />
+</Project>

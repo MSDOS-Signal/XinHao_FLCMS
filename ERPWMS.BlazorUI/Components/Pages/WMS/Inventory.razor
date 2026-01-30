@@ -1,0 +1,148 @@
+@page "/wms/inventory"
+@using DomainInventory = ERPWMS.Domain.Entities.Inventory
+@using ERPWMS.Infrastructure.Persistence
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext DbContext
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<PageTitle>库存查询</PageTitle>
+
+<div class="container-fluid">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0 text-info fw-bold"><i class="bi bi-box-seam me-2"></i>实时库存总览 (WMS)</h5>
+        </div>
+        <div class="card-body">
+             <div class="row mb-3">
+                <div class="col-md-3">
+                    <select class="form-select" @bind="selectedWarehouse">
+                        <option value="">所有仓库</option>
+                        <option value="WH-RAW">原料库 (WH-RAW)</option>
+                        <option value="WH-FIN">成品库 (WH-FIN)</option>
+                        <option value="WH-WIP">线边库 (WH-WIP)</option>
+                    </select>
+                </div>
+                 <div class="col-md-5">
+                    <input type="text" class="form-control" placeholder="输入物料编码/名称/批次号..." @bind="searchKeyword" @bind:event="oninput" @onkeyup="HandleSearch">
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-info text-white w-100" @onclick="LoadData">查询</button>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-outline-secondary w-100" @onclick="ResetSearch">重置</button>
+                </div>
+            </div>
+
+            @if (inventories == null)
+            {
+                <div class="text-center py-5">
+                    <div class="spinner-border text-info" role="status"></div>
+                    <p class="mt-2 text-muted">正在同步库存数据...</p>
+                </div>
+            }
+            else if (inventories.Count == 0)
+            {
+                <div class="alert alert-warning">未找到符合条件的库存记录。</div>
+            }
+            else
+            {
+                <table class="table table-hover table-sm align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>物料编码</th>
+                            <th>物料名称</th>
+                            <th>仓库</th>
+                            <th>库位</th>
+                            <th>批次号</th>
+                            <th>库存数量</th>
+                            <th>单位</th>
+                            <th>入库时间</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in inventories)
+                        {
+                            <tr>
+                                <td><span class="badge bg-secondary">@item.ProductCode</span></td>
+                                <td>@item.ProductName</td>
+                                <td>@item.WarehouseCode</td>
+                                <td>@item.LocationCode</td>
+                                <td>@item.BatchNo</td>
+                                <td class="fw-bold @(item.Quantity < 100 ? "text-danger" : "text-success")">
+                                    @item.Quantity.ToString("N0")
+                                    @if(item.Quantity < 100) { <i class="bi bi-exclamation-circle-fill ms-1" title="低库存预警"></i> }
+                                </td>
+                                <td>@item.Unit</td>
+                                <td>@item.CreatedTime.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    @if (item.ExpiryDate.HasValue && item.ExpiryDate < DateTime.Now)
+                                    {
+                                        <span class="badge bg-danger">已过期</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">正常</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<DomainInventory>? inventories;
+    private string selectedWarehouse = "";
+    private string searchKeyword = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task HandleSearch(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await LoadData();
+        }
+    }
+
+    private async Task LoadData()
+    {
+        try 
+        {
+            var query = DbContext.Inventories.AsNoTracking().AsQueryable();
+
+            if (!string.IsNullOrEmpty(selectedWarehouse))
+            {
+                query = query.Where(i => i.WarehouseCode == selectedWarehouse);
+            }
+
+            if (!string.IsNullOrEmpty(searchKeyword))
+            {
+                query = query.Where(i => i.ProductName.Contains(searchKeyword) 
+                                      || i.ProductCode.Contains(searchKeyword) 
+                                      || i.BatchNo.Contains(searchKeyword));
+            }
+
+            inventories = await query.OrderByDescending(i => i.CreatedTime).ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private async Task ResetSearch()
+    {
+        selectedWarehouse = "";
+        searchKeyword = "";
+        await LoadData();
+    }
+}

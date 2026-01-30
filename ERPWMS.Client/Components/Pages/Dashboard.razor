@@ -1,0 +1,179 @@
+@page "/dashboard"
+@inject InventoryService InventoryService
+@inject IJSRuntime JSRuntime
+
+<h1 class="mb-4">炘灏智造 · 综合运营看板</h1>
+
+<div class="row mb-4">
+    <div class="col-md-6 col-lg-3">
+        <div class="card text-white bg-primary mb-3 shadow">
+            <div class="card-header text-white fw-bold">总库存量</div>
+            <div class="card-body">
+                <h3 class="card-title text-white">@stats?.TotalQuantity</h3>
+                <p class="card-text text-white-50">实时库存总数</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card text-white bg-success mb-3 shadow">
+            <div class="card-header text-white fw-bold">库存总价值</div>
+            <div class="card-body">
+                <h3 class="card-title text-white">@stats?.TotalValue.ToString("C")</h3>
+                <p class="card-text text-white-50">预估资产价值</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card text-white bg-warning mb-3 shadow">
+            <div class="card-header text-white fw-bold">待处理订单</div>
+            <div class="card-body">
+                <h3 class="card-title text-white">@(stats?.PendingOrders ?? 0)</h3>
+                <p class="card-text text-white-50">需要立即处理</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card text-white bg-danger mb-3 shadow">
+            <div class="card-header text-white fw-bold">系统告警</div>
+            <div class="card-body">
+                <h3 class="card-title text-white">@(stats?.SystemAlerts ?? 0)</h3>
+                <p class="card-text text-white-50">设备异常提醒</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">库存分布概览</h6>
+            </div>
+            <div class="card-body">
+                <div id="mainChart" style="width: 100%; height: 400px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <!-- System Status -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">系统运行状态</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Web API 网关
+                        <span class="badge bg-success rounded-pill">在线</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        WCS 设备服务
+                        <span class="badge bg-success rounded-pill">运行中</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        SCADA 监控服务
+                        <span class="badge bg-success rounded-pill">运行中</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        数据库连接
+                        <span class="badge bg-success rounded-pill">正常</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SRM Chart -->
+        <div class="card shadow mb-4">
+             <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">SRM 供货绩效分析</h6>
+            </div>
+            <div class="card-body">
+                <div id="srmChart" style="width: 100%; height: 250px;"></div>
+                <div class="text-center mt-2 small text-muted">
+                    准时交货率: @(stats?.SupplyPerformance?.Total > 0 ? (stats.SupplyPerformance.OnTime * 100.0 / stats.SupplyPerformance.Total).ToString("F1") : "0.0")%
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private DashboardStats? stats;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            stats = await InventoryService.GetDashboardStatsAsync();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"Dashboard Load Error: {ex.Message}");
+        }
+    }
+
+    private bool _chartInitialized = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (stats != null && !_chartInitialized)
+        {
+            // Inventory Chart
+            var chartOption = new
+            {
+                title = new { text = "库存类别分布", textStyle = new { color = "#ffffff" } },
+                tooltip = new { },
+                legend = new { data = new[] { "库存量" }, textStyle = new { color = "#ffffff" } },
+                xAxis = new { 
+                    data = stats.CategoryDistribution.Select(c => c.Name).ToArray(),
+                    axisLabel = new { color = "#ffffff" }
+                },
+                yAxis = new { axisLabel = new { color = "#ffffff" } },
+                series = new[]
+                {
+                    new
+                    {
+                        name = "库存量",
+                        type = "bar",
+                        data = stats.CategoryDistribution.Select(c => c.Value).ToArray(),
+                        itemStyle = new { color = "#4e73df" }
+                    }
+                }
+            };
+
+            await JSRuntime.InvokeVoidAsync("echartsInterop.initChart", "mainChart", chartOption);
+
+            // SRM Chart
+            var onTime = stats.SupplyPerformance?.OnTime ?? 0;
+            var total = stats.SupplyPerformance?.Total ?? 1; // Avoid div by 0
+            var delayed = total - onTime;
+            
+            var srmOption = new 
+            {
+                tooltip = new { trigger = "item" },
+                legend = new { top = "5%", left = "center", textStyle = new { color = "#ffffff" } },
+                series = new[]
+                {
+                    new
+                    {
+                        name = "供货绩效",
+                        type = "pie",
+                        radius = new[] { "40%", "70%" },
+                        avoidLabelOverlap = false,
+                        itemStyle = new { borderRadius = 10, borderColor = "#fff", borderWidth = 2 },
+                        label = new { show = false, position = "center" },
+                        emphasis = new { label = new { show = true, fontSize = "20", fontWeight = "bold" } },
+                        data = new[]
+                        {
+                            new { value = onTime, name = "准时", itemStyle = new { color = "#1cc88a" } },
+                            new { value = delayed, name = "延误", itemStyle = new { color = "#e74a3b" } }
+                        }
+                    }
+                }
+            };
+            await JSRuntime.InvokeVoidAsync("echartsInterop.initChart", "srmChart", srmOption);
+
+            _chartInitialized = true;
+        }
+    }
+}

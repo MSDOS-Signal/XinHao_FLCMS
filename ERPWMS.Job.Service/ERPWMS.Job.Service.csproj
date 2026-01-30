@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-ERPWMS.Job.Service-19e17bf6-3ee0-47ef-822f-bd34b095864c</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hangfire" Version="1.8.22" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ERPWMS.Application\ERPWMS.Application.csproj" />
+    <ProjectReference Include="..\ERPWMS.Infrastructure\ERPWMS.Infrastructure.csproj" />
+    <ProjectReference Include="..\ERPWMS.Shared\ERPWMS.Shared.csproj" />
+  </ItemGroup>
+</Project>

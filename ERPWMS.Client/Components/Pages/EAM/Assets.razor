@@ -1,0 +1,370 @@
+@page "/eam/assets"
+@inject EnterpriseService EnterpriseService
+@inject IJSRuntime JSRuntime
+
+<h3 class="mb-3">EAM 资产管理</h3>
+
+<div class="d-flex justify-content-end mb-3">
+    <button class="btn btn-danger" @onclick="ShowCreateModal">
+        <i class="bi bi-plus-lg"></i> 新增资产
+    </button>
+</div>
+
+@if (assets == null)
+{
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">加载中...</span>
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var asset in assets)
+        {
+            <div class="col">
+                <div class="card h-100 shadow border-left-danger">
+                    <div class="card-header bg-transparent d-flex justify-content-between">
+                        <h5 class="card-title text-danger mb-0">@asset.AssetName</h5>
+                        <div>
+                             <small class="text-muted me-2">@asset.AssetCode</small>
+                             <button class="btn btn-sm btn-link text-primary p-0 me-2" @onclick="() => EditAsset(asset)"><i class="bi bi-pencil"></i></button>
+                             <button class="btn btn-sm btn-link text-danger p-0" @onclick="() => DeleteAsset(asset.Id)"><i class="bi bi-x-lg"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            <strong>位置:</strong> @asset.Location<br/>
+                            <strong>型号:</strong> @asset.Model<br/>
+                            <strong>原值:</strong> @asset.PurchasePrice.ToString("C")<br/>
+                            <strong>当前价值:</strong> @asset.CurrentValue.ToString("C")<br/>
+                            <strong>购入日期:</strong> @asset.PurchaseDate.ToString("yyyy-MM-dd")
+                        </p>
+                    </div>
+                    <div class="card-footer bg-transparent d-flex justify-content-between align-items-center">
+                        <select class="form-select form-select-sm @(asset.Status == "Active" ? "bg-success" : (asset.Status == "Maintenance" ? "bg-warning text-dark" : "bg-secondary")) text-white border-0" 
+                                style="width: auto; font-size: 0.8rem; padding-right: 2rem;"
+                                value="@asset.Status"
+                                @onchange="@(e => UpdateAssetStatus(asset, e.Value?.ToString()))">
+                            <option value="Active" class="bg-dark text-white">正常使用</option>
+                            <option value="Maintenance" class="bg-dark text-white">维护中</option>
+                            <option value="Inactive" class="bg-dark text-white">闲置</option>
+                            <option value="Scrapped" class="bg-dark text-white">报废</option>
+                        </select>
+                        <button class="btn btn-sm btn-outline-secondary" @onclick="() => ShowMaintenance(asset)">
+                            <i class="bi bi-tools"></i> 维保记录
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<!-- Create Modal -->
+@if (showCreateModal)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white border-danger">
+                <div class="modal-header border-danger">
+                    <h5 class="modal-title">@(newAsset.Id == Guid.Empty ? "新增资产" : "编辑资产")</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseCreateModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">资产编号</label>
+                        <input type="text" class="form-control bg-secondary text-white border-0" @bind="newAsset.AssetCode" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">资产名称</label>
+                        <input type="text" class="form-control bg-dark text-white border-danger" @bind="newAsset.AssetName" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">状态</label>
+                        <select class="form-select bg-dark text-white border-danger" @bind="newAsset.Status">
+                            <option value="Active">正常使用</option>
+                            <option value="Maintenance">维护中</option>
+                            <option value="Inactive">闲置</option>
+                            <option value="Scrapped">报废</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">型号</label>
+                            <input type="text" class="form-control bg-dark text-white border-danger" @bind="newAsset.Model" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">位置</label>
+                            <input type="text" class="form-control bg-dark text-white border-danger" @bind="newAsset.Location" />
+                        </div>
+                    </div>
+                     <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">采购价格</label>
+                            <input type="number" class="form-control bg-dark text-white border-danger" @bind="newAsset.PurchasePrice" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">采购日期</label>
+                            <input type="date" class="form-control bg-dark text-white border-danger" @bind="newAsset.PurchaseDate" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-danger">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseCreateModal">取消</button>
+                    <button type="button" class="btn btn-danger" @onclick="SaveAsset">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Maintenance Modal -->
+@if (showMaintenanceModal && selectedAsset != null)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white border-danger">
+                <div class="modal-header border-danger">
+                    <h5 class="modal-title">维保记录 - @selectedAsset.AssetName</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseMaintenanceModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card mb-3 bg-secondary border-0">
+                        <div class="card-body">
+                            <h6 class="card-title text-white mb-2">@(newRecord.Id == Guid.Empty ? "新增维保记录" : "编辑维保记录")</h6>
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <input type="date" class="form-control form-control-sm bg-dark text-white border-secondary" @bind="newRecord.Date" />
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-select form-select-sm bg-dark text-white border-secondary" @bind="newRecord.Type">
+                                        <option value="日常维护">日常维护</option>
+                                        <option value="故障维修">故障维修</option>
+                                        <option value="定期保养">定期保养</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-sm btn-danger w-100" @onclick="AddMaintenanceRecord">
+                                        <i class="bi bi-save"></i> 保存记录
+                                    </button>
+                                </div>
+                                <div class="col-12 mt-2">
+                                    <textarea class="form-control form-control-sm bg-dark text-white border-secondary" rows="2" placeholder="维保内容..." @bind="newRecord.Content"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline" style="max-height: 400px; overflow-y: auto;">
+                        @foreach (var record in maintenanceRecords)
+                        {
+                            <div class="card mb-3 border-start border-4 shadow-sm bg-dark text-white @(record.Type == "故障维修" ? "border-danger" : "border-success")" style="border-right: 0; border-top: 0; border-bottom: 0;">
+                                <div class="card-body py-2">
+                                    <div class="d-flex justify-content-between">
+                                        <h6 class="card-title fw-bold @(record.Type == "故障维修" ? "text-danger" : "text-success")">
+                                            @record.Type <small class="text-white-50 ms-2">@record.Date.ToString("yyyy-MM-dd")</small>
+                                        </h6>
+                                        <button class="btn btn-sm btn-link text-white-50 p-0" @onclick="() => EditRecord(record)">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                    </div>
+                                    <p class="card-text small text-white">@record.Content</p>
+                                </div>
+                            </div>
+                        }
+                        @if (maintenanceRecords.Count == 0)
+                        {
+                            <p class="text-center text-muted my-3">暂无维保记录</p>
+                        }
+                    </div>
+                </div>
+                <div class="modal-footer border-danger">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseMaintenanceModal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<ERPWMS.Domain.Entities.Asset>? assets;
+    private ERPWMS.Domain.Entities.Asset newAsset = new();
+    private ERPWMS.Domain.Entities.Asset? selectedAsset;
+    private bool showCreateModal = false;
+    private bool showMaintenanceModal = false;
+    
+    private List<MaintenanceRecord> maintenanceRecords = new();
+    private MaintenanceRecord newRecord = new();
+
+    public class MaintenanceRecord
+    {
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public DateTime Date { get; set; } = DateTime.Now;
+        public string Type { get; set; } = "日常维护";
+        public string Content { get; set; } = string.Empty;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        assets = await EnterpriseService.GetAssetsAsync();
+    }
+
+    private void ShowCreateModal()
+    {
+        newAsset = new ERPWMS.Domain.Entities.Asset
+        {
+            AssetCode = $"AST-{DateTime.Now:yyyyMMddHHmmss}",
+            PurchaseDate = DateTime.Now,
+            Status = "Active",
+            CurrentValue = 0,
+            PurchasePrice = 0
+        };
+        newAsset.Id = Guid.Empty; // Ensure it's new
+        showCreateModal = true;
+    }
+
+    private void EditAsset(ERPWMS.Domain.Entities.Asset asset)
+    {
+        newAsset = new ERPWMS.Domain.Entities.Asset
+        {
+            Id = asset.Id,
+            AssetCode = asset.AssetCode,
+            AssetName = asset.AssetName,
+            Model = asset.Model,
+            SerialNumber = asset.SerialNumber,
+            Manufacturer = asset.Manufacturer,
+            Location = asset.Location,
+            Department = asset.Department,
+            PurchaseDate = asset.PurchaseDate,
+            PurchasePrice = asset.PurchasePrice,
+            CurrentValue = asset.CurrentValue,
+            Status = asset.Status,
+            LastMaintenanceDate = asset.LastMaintenanceDate,
+            NextMaintenanceDate = asset.NextMaintenanceDate,
+            MaintenanceLog = asset.MaintenanceLog
+        };
+        showCreateModal = true;
+    }
+
+    private void CloseCreateModal()
+    {
+        showCreateModal = false;
+    }
+
+    private async Task SaveAsset()
+    {
+        if (newAsset.Id == Guid.Empty)
+        {
+            newAsset.CurrentValue = newAsset.PurchasePrice;
+            await EnterpriseService.AddAssetAsync(newAsset);
+        }
+        else
+        {
+            await EnterpriseService.UpdateAssetAsync(newAsset);
+        }
+        showCreateModal = false;
+        await LoadData();
+    }
+
+    private async Task DeleteAsset(Guid id)
+    {
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "确定要删除该资产吗？");
+        if (confirmed)
+        {
+            await EnterpriseService.DeleteAssetAsync(id);
+            await LoadData();
+        }
+    }
+
+    private async Task UpdateAssetStatus(ERPWMS.Domain.Entities.Asset asset, string? newStatus)
+    {
+        if (string.IsNullOrEmpty(newStatus)) return;
+        asset.Status = newStatus;
+        await EnterpriseService.UpdateAssetAsync(asset);
+        // Refresh to ensure UI stays in sync (though binding should update it)
+        // await LoadData(); 
+    }
+    
+    private void ShowMaintenance(ERPWMS.Domain.Entities.Asset asset)
+    {
+        selectedAsset = asset;
+        if (string.IsNullOrEmpty(asset.MaintenanceLog) || asset.MaintenanceLog == "[]")
+        {
+            maintenanceRecords = new List<MaintenanceRecord>();
+        }
+        else
+        {
+            try
+            {
+                maintenanceRecords = System.Text.Json.JsonSerializer.Deserialize<List<MaintenanceRecord>>(asset.MaintenanceLog) ?? new();
+            }
+            catch
+            {
+                maintenanceRecords = new();
+            }
+        }
+        newRecord = new MaintenanceRecord { Date = DateTime.Now, Type = "日常维护" };
+        showMaintenanceModal = true;
+    }
+
+    private void EditRecord(MaintenanceRecord record)
+    {
+        // Clone for editing
+        newRecord = new MaintenanceRecord
+        {
+            Id = record.Id,
+            Date = record.Date,
+            Type = record.Type,
+            Content = record.Content
+        };
+    }
+
+    private async Task AddMaintenanceRecord()
+    {
+        if (selectedAsset == null) return;
+        if (string.IsNullOrWhiteSpace(newRecord.Content))
+        {
+             await JSRuntime.InvokeVoidAsync("alert", "请输入维保内容");
+             return;
+        }
+        
+        var existing = maintenanceRecords.FirstOrDefault(r => r.Id == newRecord.Id);
+        if (existing != null)
+        {
+            // Update
+            existing.Date = newRecord.Date;
+            existing.Type = newRecord.Type;
+            existing.Content = newRecord.Content;
+        }
+        else
+        {
+            // Add
+            var recordToAdd = new MaintenanceRecord 
+            { 
+                Id = Guid.NewGuid(),
+                Date = newRecord.Date, 
+                Type = newRecord.Type, 
+                Content = newRecord.Content 
+            };
+            maintenanceRecords.Insert(0, recordToAdd);
+            selectedAsset.LastMaintenanceDate = recordToAdd.Date;
+        }
+
+        selectedAsset.MaintenanceLog = System.Text.Json.JsonSerializer.Serialize(maintenanceRecords);
+        
+        await EnterpriseService.UpdateAssetAsync(selectedAsset);
+        // Reset input
+        newRecord = new MaintenanceRecord { Date = DateTime.Now, Type = "日常维护" };
+        await LoadData();
+    }
+
+    private void CloseMaintenanceModal()
+    {
+        showMaintenanceModal = false;
+    }
+}

@@ -1,0 +1,262 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "E:\\C#app\\ERPWMS_MES_SuperProject\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{FCA64DDE-D16F-424A-B34F-0C4E38DBC7FC}|ERPWMS.WebAPI\\ERPWMS.WebAPI.csproj|e:\\c#app\\erpwms_mes_superproject\\erpwms.webapi\\erpwms.webapi.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{FCA64DDE-D16F-424A-B34F-0C4E38DBC7FC}|ERPWMS.WebAPI\\ERPWMS.WebAPI.csproj|solutionrelative:erpwms.webapi\\erpwms.webapi.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE8A34A8-9F68-44BA-AEE0-9D0515A9F239}|ERPWMS.WCS.Service\\ERPWMS.WCS.Service.csproj|e:\\c#app\\erpwms_mes_superproject\\erpwms.wcs.service\\erpwms.wcs.service.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{EE8A34A8-9F68-44BA-AEE0-9D0515A9F239}|ERPWMS.WCS.Service\\ERPWMS.WCS.Service.csproj|solutionrelative:erpwms.wcs.service\\erpwms.wcs.service.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9B659D17-46BC-411C-9D0A-5FE24132A7FB}|ERPWMS.Tools.CLI\\ERPWMS.Tools.CLI.csproj|e:\\c#app\\erpwms_mes_superproject\\erpwms.tools.cli\\erpwms.tools.cli.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{9B659D17-46BC-411C-9D0A-5FE24132A7FB}|ERPWMS.Tools.CLI\\ERPWMS.Tools.CLI.csproj|solutionrelative:erpwms.tools.cli\\erpwms.tools.cli.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6F17D436-E667-4AE5-8F05-E19840E845C5}|ERPWMS.Tests.Performance\\ERPWMS.Tests.Performance.csproj|e:\\c#app\\erpwms_mes_superproject\\erpwms.tests.performance\\erpwms.tests.performance.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{6F17D436-E667-4AE5-8F05-E19840E845C5}|ERPWMS.Tests.Performance\\ERPWMS.Tests.Performance.csproj|solutionrelative:erpwms.tests.performance\\erpwms.tests.performance.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{43012D05-3D4D-4988-A3A9-9D51EEC4038B}|ERPWMS.Tests.Integration\\ERPWMS.Tests.Integration.csproj|e:\\c#app\\erpwms_mes_superproject\\erpwms.tests.integration\\erpwms.tests.integration.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{43012D05-3D4D-4988-A3A9-9D51EEC4038B}|ERPWMS.Tests.Integration\\ERPWMS.Tests.Integration.csproj|solutionrelative:erpwms.tests.integration\\erpwms.tests.integration.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D6599FA-B7B5-4445-87FE-D177AEBE8287}|ERPWMS.SCADA.Service\\ERPWMS.SCADA.Service.csproj|e:\\c#app\\erpwms_mes_superproject\\erpwms.scada.service\\erpwms.scada.service.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{6D6599FA-B7B5-4445-87FE-D177AEBE8287}|ERPWMS.SCADA.Service\\ERPWMS.SCADA.Service.csproj|solutionrelative:erpwms.scada.service\\erpwms.scada.service.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B2045DBB-519A-4CF6-BA6D-4DD1A9BA6A0B}|ERPWMS.Shared\\ERPWMS.Shared.csproj|e:\\c#app\\erpwms_mes_superproject\\erpwms.shared\\erpwms.shared.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{B2045DBB-519A-4CF6-BA6D-4DD1A9BA6A0B}|ERPWMS.Shared\\ERPWMS.Shared.csproj|solutionrelative:erpwms.shared\\erpwms.shared.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BB8D790A-3F23-4457-997C-E127BAA5BA9B}|ERPWMS.PDA\\ERPWMS.PDA.csproj|e:\\c#app\\erpwms_mes_superproject\\erpwms.pda\\erpwms.pda.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{BB8D790A-3F23-4457-997C-E127BAA5BA9B}|ERPWMS.PDA\\ERPWMS.PDA.csproj|solutionrelative:erpwms.pda\\erpwms.pda.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FC8F6F7B-9E4B-4469-95DF-4AEDDFB13AE4}|ERPWMS.Infrastructure\\ERPWMS.Infrastructure.csproj|e:\\c#app\\erpwms_mes_superproject\\erpwms.infrastructure\\erpwms.infrastructure.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{FC8F6F7B-9E4B-4469-95DF-4AEDDFB13AE4}|ERPWMS.Infrastructure\\ERPWMS.Infrastructure.csproj|solutionrelative:erpwms.infrastructure\\erpwms.infrastructure.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0E64DC78-6983-423E-8844-D405714A0D22}|ERPWMS.Domain\\ERPWMS.Domain.csproj|e:\\c#app\\erpwms_mes_superproject\\erpwms.domain\\erpwms.domain.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{0E64DC78-6983-423E-8844-D405714A0D22}|ERPWMS.Domain\\ERPWMS.Domain.csproj|solutionrelative:erpwms.domain\\erpwms.domain.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CA20883D-40EF-4722-A2EC-AFAD071726BA}|ERPWMS.BlazorUI\\ERPWMS.BlazorUI.csproj|e:\\c#app\\erpwms_mes_superproject\\erpwms.blazorui\\erpwms.blazorui.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{CA20883D-40EF-4722-A2EC-AFAD071726BA}|ERPWMS.BlazorUI\\ERPWMS.BlazorUI.csproj|solutionrelative:erpwms.blazorui\\erpwms.blazorui.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C0776CB-FEA4-461B-92E3-1BA6AA324B90}|ERPWMS.Application\\ERPWMS.Application.csproj|e:\\c#app\\erpwms_mes_superproject\\erpwms.application\\erpwms.application.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{6C0776CB-FEA4-461B-92E3-1BA6AA324B90}|ERPWMS.Application\\ERPWMS.Application.csproj|solutionrelative:erpwms.application\\erpwms.application.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DFE94EA5-6BC2-41D6-8DA4-3282C99289E7}|ERPWMS.APS.EAM.MOM\\ERPWMS.APS.EAM.MOM.csproj|e:\\c#app\\erpwms_mes_superproject\\erpwms.aps.eam.mom\\erpwms.aps.eam.mom.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{DFE94EA5-6BC2-41D6-8DA4-3282C99289E7}|ERPWMS.APS.EAM.MOM\\ERPWMS.APS.EAM.MOM.csproj|solutionrelative:erpwms.aps.eam.mom\\erpwms.aps.eam.mom.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F5EFC1D8-D68C-494A-84CC-71BB834D196C}|ERPWMS.Barcode.RFID\\ERPWMS.Barcode.RFID.csproj|e:\\c#app\\erpwms_mes_superproject\\erpwms.barcode.rfid\\erpwms.barcode.rfid.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{F5EFC1D8-D68C-494A-84CC-71BB834D196C}|ERPWMS.Barcode.RFID\\ERPWMS.Barcode.RFID.csproj|solutionrelative:erpwms.barcode.rfid\\erpwms.barcode.rfid.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 8,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ERPWMS.WCS.Service",
+              "DocumentMoniker": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.WCS.Service\\ERPWMS.WCS.Service.csproj",
+              "RelativeDocumentMoniker": "ERPWMS.WCS.Service\\ERPWMS.WCS.Service.csproj",
+              "ToolTip": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.WCS.Service\\ERPWMS.WCS.Service.csproj",
+              "RelativeToolTip": "ERPWMS.WCS.Service\\ERPWMS.WCS.Service.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-29T10:27:46.481Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ERPWMS.Tools.CLI",
+              "DocumentMoniker": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Tools.CLI\\ERPWMS.Tools.CLI.csproj",
+              "RelativeDocumentMoniker": "ERPWMS.Tools.CLI\\ERPWMS.Tools.CLI.csproj",
+              "ToolTip": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Tools.CLI\\ERPWMS.Tools.CLI.csproj",
+              "RelativeToolTip": "ERPWMS.Tools.CLI\\ERPWMS.Tools.CLI.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-29T10:27:44.761Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ERPWMS.Tests.Performance",
+              "DocumentMoniker": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Tests.Performance\\ERPWMS.Tests.Performance.csproj",
+              "RelativeDocumentMoniker": "ERPWMS.Tests.Performance\\ERPWMS.Tests.Performance.csproj",
+              "ToolTip": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Tests.Performance\\ERPWMS.Tests.Performance.csproj",
+              "RelativeToolTip": "ERPWMS.Tests.Performance\\ERPWMS.Tests.Performance.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-29T10:27:44.3Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ERPWMS.SCADA.Service",
+              "DocumentMoniker": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.SCADA.Service\\ERPWMS.SCADA.Service.csproj",
+              "RelativeDocumentMoniker": "ERPWMS.SCADA.Service\\ERPWMS.SCADA.Service.csproj",
+              "ToolTip": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.SCADA.Service\\ERPWMS.SCADA.Service.csproj",
+              "RelativeToolTip": "ERPWMS.SCADA.Service\\ERPWMS.SCADA.Service.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-29T10:27:43.04Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ERPWMS.Shared",
+              "DocumentMoniker": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Shared\\ERPWMS.Shared.csproj",
+              "RelativeDocumentMoniker": "ERPWMS.Shared\\ERPWMS.Shared.csproj",
+              "ToolTip": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Shared\\ERPWMS.Shared.csproj",
+              "RelativeToolTip": "ERPWMS.Shared\\ERPWMS.Shared.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-29T10:27:42.54Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "ERPWMS.PDA",
+              "DocumentMoniker": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.PDA\\ERPWMS.PDA.csproj",
+              "RelativeDocumentMoniker": "ERPWMS.PDA\\ERPWMS.PDA.csproj",
+              "ToolTip": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.PDA\\ERPWMS.PDA.csproj",
+              "RelativeToolTip": "ERPWMS.PDA\\ERPWMS.PDA.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-29T10:27:41.947Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "ERPWMS.Infrastructure",
+              "DocumentMoniker": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Infrastructure\\ERPWMS.Infrastructure.csproj",
+              "RelativeDocumentMoniker": "ERPWMS.Infrastructure\\ERPWMS.Infrastructure.csproj",
+              "ToolTip": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Infrastructure\\ERPWMS.Infrastructure.csproj",
+              "RelativeToolTip": "ERPWMS.Infrastructure\\ERPWMS.Infrastructure.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-29T10:27:41.489Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ERPWMS.WebAPI",
+              "DocumentMoniker": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.WebAPI\\ERPWMS.WebAPI.csproj",
+              "RelativeDocumentMoniker": "ERPWMS.WebAPI\\ERPWMS.WebAPI.csproj",
+              "ToolTip": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.WebAPI\\ERPWMS.WebAPI.csproj",
+              "RelativeToolTip": "ERPWMS.WebAPI\\ERPWMS.WebAPI.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-29T10:27:27.559Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ERPWMS.Domain",
+              "DocumentMoniker": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Domain\\ERPWMS.Domain.csproj",
+              "RelativeDocumentMoniker": "ERPWMS.Domain\\ERPWMS.Domain.csproj",
+              "ToolTip": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Domain\\ERPWMS.Domain.csproj",
+              "RelativeToolTip": "ERPWMS.Domain\\ERPWMS.Domain.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-29T10:27:41.036Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "ERPWMS.Application",
+              "DocumentMoniker": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Application\\ERPWMS.Application.csproj",
+              "RelativeDocumentMoniker": "ERPWMS.Application\\ERPWMS.Application.csproj",
+              "ToolTip": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Application\\ERPWMS.Application.csproj",
+              "RelativeToolTip": "ERPWMS.Application\\ERPWMS.Application.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-29T10:27:39.921Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "ERPWMS.APS.EAM.MOM",
+              "DocumentMoniker": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.APS.EAM.MOM\\ERPWMS.APS.EAM.MOM.csproj",
+              "RelativeDocumentMoniker": "ERPWMS.APS.EAM.MOM\\ERPWMS.APS.EAM.MOM.csproj",
+              "ToolTip": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.APS.EAM.MOM\\ERPWMS.APS.EAM.MOM.csproj",
+              "RelativeToolTip": "ERPWMS.APS.EAM.MOM\\ERPWMS.APS.EAM.MOM.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-29T10:27:39.132Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ERPWMS.Tests.Integration",
+              "DocumentMoniker": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Tests.Integration\\ERPWMS.Tests.Integration.csproj",
+              "RelativeDocumentMoniker": "ERPWMS.Tests.Integration\\ERPWMS.Tests.Integration.csproj",
+              "ToolTip": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Tests.Integration\\ERPWMS.Tests.Integration.csproj",
+              "RelativeToolTip": "ERPWMS.Tests.Integration\\ERPWMS.Tests.Integration.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-29T10:27:20.54Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "ERPWMS.BlazorUI",
+              "DocumentMoniker": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.BlazorUI\\ERPWMS.BlazorUI.csproj",
+              "RelativeDocumentMoniker": "ERPWMS.BlazorUI\\ERPWMS.BlazorUI.csproj",
+              "ToolTip": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.BlazorUI\\ERPWMS.BlazorUI.csproj",
+              "RelativeToolTip": "ERPWMS.BlazorUI\\ERPWMS.BlazorUI.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-29T10:27:25.689Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "ERPWMS.Barcode.RFID",
+              "DocumentMoniker": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Barcode.RFID\\ERPWMS.Barcode.RFID.csproj",
+              "RelativeDocumentMoniker": "ERPWMS.Barcode.RFID\\ERPWMS.Barcode.RFID.csproj",
+              "ToolTip": "E:\\C#app\\ERPWMS_MES_SuperProject\\ERPWMS.Barcode.RFID\\ERPWMS.Barcode.RFID.csproj",
+              "RelativeToolTip": "ERPWMS.Barcode.RFID\\ERPWMS.Barcode.RFID.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-29T10:27:24.955Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="" style="white-space: normal; line-height: 1.2; font-size: 0.9rem;">
+            <img src="logo.svg" alt="Logo" style="height: 24px; width: 24px; margin-right: 8px; flex-shrink: 0;" />
+            <span>炘灏全链路核心管理系统</span>
+        </a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="nav flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-speedometer2" aria-hidden="true"></span> 综合看板
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <div class="nav-link disabled text-light fw-bold mt-2">📊 ERP 核心</div>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="erp/purchase">
+                <span class="bi bi-cart3" aria-hidden="true"></span> 采购管理
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="erp/sales">
+                <span class="bi bi-currency-dollar" aria-hidden="true"></span> 销售管理
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <div class="nav-link disabled text-light fw-bold mt-2">🏭 MES 生产</div>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="mes/workorders">
+                <span class="bi bi-card-checklist" aria-hidden="true"></span> 生产工单
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="mes/scada">
+                <span class="bi bi-activity" aria-hidden="true"></span> 设备监控
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <div class="nav-link disabled text-light fw-bold mt-2">📦 WMS 仓储</div>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="wms/inventory">
+                <span class="bi bi-box-seam" aria-hidden="true"></span> 库存查询
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="wms/inbound">
+                <span class="bi bi-arrow-down-square" aria-hidden="true"></span> 入库管理
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="wms/outbound">
+                <span class="bi bi-arrow-up-square" aria-hidden="true"></span> 出库管理
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <div class="nav-link disabled text-light fw-bold mt-2">⚙️ 基础数据</div>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="products">
+                <span class="bi bi-boxes" aria-hidden="true"></span> 物料管理
+            </NavLink>
+        </div>
+    </nav>
+</div>
+

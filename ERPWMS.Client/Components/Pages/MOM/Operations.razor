@@ -1,0 +1,203 @@
+@page "/mom/operations"
+@inject EnterpriseService EnterpriseService
+@inject IJSRuntime JSRuntime
+
+<h3 class="mb-3 text-white">MOM 制造运营管理</h3>
+
+<div class="card bg-dark text-white border-secondary shadow mb-4">
+    <div class="card-header border-secondary py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-white">工序列表</h6>
+         <button class="btn btn-primary btn-sm" @onclick="ShowCreateModal">
+            <i class="bi bi-plus-lg"></i> 新增工序
+        </button>
+    </div>
+    <div class="card-body">
+        @if (operations == null)
+        {
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-light" role="status">
+                    <span class="visually-hidden">加载中...</span>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th class="text-white">工序编号</th>
+                            <th class="text-white">名称</th>
+                            <th class="text-white">工作中心</th>
+                            <th class="text-white">准备时间 (分)</th>
+                            <th class="text-white">运行时间 (秒)</th>
+                            <th class="text-white">机器类型</th>
+                            <th class="text-white">关键工序</th>
+                            <th class="text-white">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in operations)
+                        {
+                            <tr>
+                                <td class="font-monospace text-warning">@item.OperationCode</td>
+                                <td class="fw-bold text-white">@item.OperationName</td>
+                                <td class="text-white">@item.WorkCenter</td>
+                                <td class="text-white-50">@item.SetupTimeMinutes</td>
+                                <td class="text-white-50">@item.RunTimeSeconds</td>
+                                <td class="text-white">@item.MachineType</td>
+                                <td>
+                                    @if (item.IsBottleneck)
+                                    {
+                                        <span class="badge bg-danger">是</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">否</span>
+                                    }
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => EditOperation(item)" title="编辑工序">
+                                        <i class="bi bi-pencil"></i> 编辑
+                                    </button>
+                                     <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteOperation(item.Id)" title="删除工序">
+                                        <i class="bi bi-trash"></i> 删除
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Create Modal -->
+@if (showCreateModal)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">新增工序</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseCreateModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">工序编号</label>
+                        <input type="text" class="form-control bg-secondary text-white border-0" @bind="newOperation.OperationCode" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">工序名称</label>
+                        <input type="text" class="form-control bg-dark text-white border-secondary" @bind="newOperation.OperationName" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">工作中心</label>
+                        <select class="form-select bg-dark text-white border-secondary" @bind="newOperation.WorkCenter">
+                            <option value="WC-001">WC-001 (切削中心)</option>
+                            <option value="WC-002">WC-002 (组装中心)</option>
+                            <option value="WC-003">WC-003 (包装中心)</option>
+                        </select>
+                    </div>
+                     <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">准备时间(分)</label>
+                            <input type="number" class="form-control bg-dark text-white border-secondary" @bind="newOperation.SetupTimeMinutes" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">运行时间(秒)</label>
+                            <input type="number" class="form-control bg-dark text-white border-secondary" @bind="newOperation.RunTimeSeconds" />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">机器类型</label>
+                        <input type="text" class="form-control bg-dark text-white border-secondary" @bind="newOperation.MachineType" />
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="isBottleneck" @bind="newOperation.IsBottleneck">
+                        <label class="form-check-label" for="isBottleneck">关键工序 (瓶颈)</label>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseCreateModal">取消</button>
+                    <button type="button" class="btn btn-secondary" @onclick="SaveOperation">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<ERPWMS.Domain.Entities.Operation>? operations;
+    private ERPWMS.Domain.Entities.Operation newOperation = new();
+    private bool showCreateModal = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        operations = await EnterpriseService.GetOperationsAsync();
+    }
+
+    private void ShowCreateModal()
+    {
+        newOperation = new ERPWMS.Domain.Entities.Operation
+        {
+            OperationCode = $"OP-{DateTime.Now:yyyyMMddHHmmss}",
+            WorkCenter = "WC-001"
+        };
+        newOperation.Id = Guid.Empty;
+        showCreateModal = true;
+    }
+
+    private void EditOperation(ERPWMS.Domain.Entities.Operation op)
+    {
+        newOperation = new ERPWMS.Domain.Entities.Operation
+        {
+            Id = op.Id,
+            OperationCode = op.OperationCode,
+            OperationName = op.OperationName,
+            Description = op.Description,
+            WorkCenter = op.WorkCenter,
+            SetupTimeMinutes = op.SetupTimeMinutes,
+            RunTimeSeconds = op.RunTimeSeconds,
+            MachineType = op.MachineType,
+            SkillRequired = op.SkillRequired,
+            IsBottleneck = op.IsBottleneck
+        };
+        showCreateModal = true;
+    }
+
+    private void CloseCreateModal()
+    {
+        showCreateModal = false;
+    }
+
+    private async Task SaveOperation()
+    {
+        if (newOperation.Id == Guid.Empty)
+        {
+            await EnterpriseService.AddOperationAsync(newOperation);
+        }
+        else
+        {
+            await EnterpriseService.UpdateOperationAsync(newOperation);
+        }
+        showCreateModal = false;
+        await LoadData();
+    }
+
+    private async Task DeleteOperation(Guid id)
+    {
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "确定要删除该工序吗？");
+        if (confirmed)
+        {
+            await EnterpriseService.DeleteOperationAsync(id);
+            await LoadData();
+        }
+    }
+}
